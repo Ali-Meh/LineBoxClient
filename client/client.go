@@ -47,15 +47,7 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 		message, _ := base64.StdEncoding.DecodeString(encMsg)
 
 		fmt.Printf("server ->: %s\n", message)
-		// c.SendCord(1, 4)
-		// c.SendCord(4, 1)
-		// c.SendCord(0, 3)
-		// c.SendCord(0, 3)
-		// c.SendCord(1, 0)
 		c.SendCord(0, 1)
-		// c.SendCord(2, 1)
-		// c.SendCord(1, 2)
-		// return message,err
 	}
 }
 
