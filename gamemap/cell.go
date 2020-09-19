@@ -1,4 +1,6 @@
-package map
+package gamemap
+
+import "strconv"
 
 //EdgeState state of the Edge
 type EdgeState string
@@ -40,4 +42,23 @@ func NewCell(cellCoord Coordinates) *Cell {
 	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: isFreeEdge}
 	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: isFreeEdge}
 	return cell
+}
+
+//NewCellXY Creates a cell with its edges based on the corrdinates given to it
+func NewCellXY(X, Y int8) *Cell {
+	cellCoord := Coordinates{X: X, Y: Y}
+	cell := new(Cell)
+	cell.Coordinate = cellCoord
+	cell.LeftEdge = Edge{Coordinates: Coordinates{X: cellCoord.X - 1, Y: cellCoord.Y}, State: isFreeEdge}
+	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: isFreeEdge}
+	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: isFreeEdge}
+	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: isFreeEdge}
+	return cell
+}
+
+func (c Cell) String() string {
+	res := "("
+	res += strconv.Itoa(int(c.Coordinate.X)) + "-" + strconv.Itoa(int(c.Coordinate.Y))
+	res += ")\t"
+	return res
 }

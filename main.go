@@ -1,26 +1,30 @@
 package main
 
+// "github.com/ali-meh/LineBoxClient/client"
 import (
-	"os"
+	"fmt"
 
-	"github.com/ali-meh/LineBoxClient/client"
+	gmap "github.com/ali-meh/LineBoxClient/gamemap"
 )
 
 func main() {
-	arguments := os.Args
-	addr := "localhost:1898"
-	clientName := "aliMiniMaxAlgo"
-	if len(arguments) == 2 {
-		addr = arguments[1]
-	}
-	if len(arguments) == 3 {
-		addr = arguments[1]
-		clientName = arguments[2]
-	}
+	gamemap := gmap.NewMapSquare(3)
+	fmt.Println(gamemap)
 
-	client, err := client.NewClientAddress(clientName, addr)
-	checkError(err)
-	client.ReadServer()
+	// arguments := os.Args
+	// addr := "localhost:1898"
+	// clientName := "aliMiniMaxAlgo"
+	// if len(arguments) == 2 {
+	// 	addr = arguments[1]
+	// }
+	// if len(arguments) == 3 {
+	// 	addr = arguments[1]
+	// 	clientName = arguments[2]
+	// }
+
+	// client, err := client.NewClientAddress(clientName, addr)
+	// checkError(err)
+	// client.ReadServer()
 
 }
 
