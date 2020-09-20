@@ -1,6 +1,9 @@
 package gamemap
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 //Map Keeps the track of Cells in game
 type Map struct {
@@ -36,7 +39,54 @@ func (gameMap Map) String() string {
 	return res
 }
 
+//SetEdgeState sets the edge if is full or empity
+func (gameMap Map) setEdgeState(X, Y int, edgeState EdgeState) {
+	//its up and down
+	if X%2 == 0 {
+		//not the upest raw
+		if Y > 0 {
+			gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State = edgeState
+		}
+		//not the lowest raw
+		if Y < len(gameMap.Cells)*2 {
+			gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State = edgeState
+		}
+	} else { //its left or right
+		//not the most left column
+		if X > 0 {
+			gameMap.Cells[Y/2][(X-1)/2].RightEdge.State = edgeState
+		}
+		//not the most right column
+		if X < len(gameMap.Cells)*2 {
+			gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State = edgeState
+		}
+	}
+}
+
 //Update updates the game map according to the raw text it gets
 func (gameMap Map) Update(rawMap string) {
+	rawMap = rawMap[strings.Index(rawMap, "@"):]
+	Aindexes := findIndex(rawMap, 'A')
+	Bindexes := findIndex(rawMap, 'B')
 
+	for _, ind := range Aindexes {
+		gameMap.setEdgeState(ind%9, ind/9, IsAEdge)
+	}
+	for _, ind := range Bindexes {
+		gameMap.setEdgeState(ind%9, ind/9, IsBEdge)
+	}
+
+	fmt.Println(Aindexes)
+	fmt.Println(Bindexes)
+}
+
+func findIndex(rawText string, char rune) []int {
+	indexes := make([]int, 0)
+	var i int = strings.IndexRune(rawText, char)
+	for i > -1 {
+		indexes = append(indexes, i)
+		i = strings.IndexRune(rawText[i+1:], char)
+	}
+
+	return indexes
 }

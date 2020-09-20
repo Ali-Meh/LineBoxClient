@@ -47,14 +47,28 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 		message, _ := base64.StdEncoding.DecodeString(encMsg)
 
 		fmt.Printf("server ->: %s\n", message)
-		c.SendCord(0, 1)
+		c.SendCord(6, 3)
+		/*
+			c.SendCord(6, 3)
+			2-1
+			0-0
+			 012345678
+			0@-@-@-@-@
+			1-#-#-#-#-
+			2@-@-@-@-@
+			3-#-#-#A#-
+			4@-@-@-@-@
+			5-#-#-#-#-
+			6@-@-@-@-@
+			7-#-#-#-#-
+			8@-@-@-@-@
+		*/
 	}
 }
 
 //SendCord sends the cordinates ai selected to ai
 func (c *Client) SendCord(x, y int8) {
-	coords := fmt.Sprintf("%d-%d", x, y)
+	coords := fmt.Sprintf("%d-%d", y, x)
 	encMsg := base64.StdEncoding.EncodeToString([]byte(coords)) + "\n"
-	fmt.Println(encMsg)
 	fmt.Fprintf(c.c, encMsg)
 }
