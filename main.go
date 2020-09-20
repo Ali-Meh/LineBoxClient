@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	gmap "github.com/ali-meh/LineBoxClient/gamemap"
+	gmap "github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
 
 func main() {

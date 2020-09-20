@@ -6,9 +6,9 @@ import "strconv"
 type EdgeState string
 
 const (
-	isAEdge    EdgeState = "A"
-	isBEdge    EdgeState = "B"
-	isFreeEdge EdgeState = "-"
+	IsAEdge    EdgeState = "A"
+	IsBEdge    EdgeState = "B"
+	IsFreeEdge EdgeState = "-"
 )
 
 //Coordinates has the coordinate of map objects
@@ -37,10 +37,10 @@ type Cell struct {
 func NewCell(cellCoord Coordinates) *Cell {
 	cell := new(Cell)
 	cell.Coordinate = cellCoord
-	cell.LeftEdge = Edge{Coordinates: Coordinates{X: cellCoord.X - 1, Y: cellCoord.Y}, State: isFreeEdge}
-	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: isFreeEdge}
-	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: isFreeEdge}
-	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: isFreeEdge}
+	cell.LeftEdge = Edge{Coordinates: Coordinates{X: cellCoord.X - 1, Y: cellCoord.Y}, State: IsFreeEdge}
+	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: IsFreeEdge}
+	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: IsFreeEdge}
+	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: IsFreeEdge}
 	return cell
 }
 
@@ -49,10 +49,10 @@ func NewCellXY(X, Y int8) *Cell {
 	cellCoord := Coordinates{X: X, Y: Y}
 	cell := new(Cell)
 	cell.Coordinate = cellCoord
-	cell.LeftEdge = Edge{Coordinates: Coordinates{X: cellCoord.X - 1, Y: cellCoord.Y}, State: isFreeEdge}
-	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: isFreeEdge}
-	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: isFreeEdge}
-	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: isFreeEdge}
+	cell.LeftEdge = Edge{Coordinates: Coordinates{X: cellCoord.X - 1, Y: cellCoord.Y}, State: IsFreeEdge}
+	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: IsFreeEdge}
+	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: IsFreeEdge}
+	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: IsFreeEdge}
 	return cell
 }
 

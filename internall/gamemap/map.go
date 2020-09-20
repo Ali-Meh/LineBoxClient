@@ -35,3 +35,8 @@ func (gameMap Map) String() string {
 	}
 	return res
 }
+
+//Update updates the game map according to the raw text it gets
+func (gameMap Map) Update(rawMap string) {
+
+}
