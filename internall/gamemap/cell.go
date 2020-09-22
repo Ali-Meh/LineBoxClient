@@ -57,8 +57,16 @@ func NewCellXY(X, Y int8) *Cell {
 }
 
 func (c Cell) String() string {
-	res := "("
-	res += strconv.Itoa(int(c.Coordinate.X)) + "-" + strconv.Itoa(int(c.Coordinate.Y))
-	res += ")\t"
+	// res := "("
+	// res += strconv.Itoa(int(c.Coordinate.X)) + "-" + strconv.Itoa(int(c.Coordinate.Y))
+	// res += ")\t"
+	//-----------------------------------------------
+	// res := "\t" + "U" + string(c.UpperEdge.State) + "\t"
+	// res += "L" + string(c.LeftEdge.State) + "(" + strconv.Itoa(int(c.Coordinate.X)) + "," + strconv.Itoa(int(c.Coordinate.Y)) + ")" + string(c.RightEdge.State) + "R" + ""
+	// res += "\t" + "D" + string(c.LowerEdge.State) + "\t"
+	//----------------------------------------------
+	res := "*\t" + string(c.UpperEdge.State) + "\t*\n"
+	res += string(c.LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(c.Coordinate.X)) + "," + strconv.Itoa(int(c.Coordinate.Y)) + ")" + "\t" + string(c.RightEdge.State) + "\n"
+	res += "*\t" + string(c.LowerEdge.State) + "\t*\n\n"
 	return res
 }

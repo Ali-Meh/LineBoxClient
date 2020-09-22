@@ -2,6 +2,7 @@ package gamemap
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -33,9 +34,18 @@ func (gameMap Map) String() string {
 	for i := 0; i < len(gameMap.Cells); i++ {
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += fmt.Sprint(gameMap.Cells[i][j])
+			res += "*\t" + string(gameMap.Cells[i][j].UpperEdge.State) + "\t*"
+		}
+		res += "\n"
+		for j := 0; j < len(gameMap.Cells[i]); j++ {
+			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + "," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
+		}
+		res += "\n"
+		for j := 0; j < len(gameMap.Cells[i]); j++ {
+			res += "*\t" + string(gameMap.Cells[i][j].LowerEdge.State) + "\t*"
 		}
 	}
+	res += "\n"
 	return res
 }
 
