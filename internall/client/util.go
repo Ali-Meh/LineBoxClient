@@ -31,7 +31,7 @@ func (c *Client) upgradeAlive() error {
 				}
 			}
 			if n > 0 {
-				fmt.Println("unexpected data: %s", buf[:n])
+				fmt.Printf("unexpected data: %s\n", buf[:n])
 			}
 		}
 	}()

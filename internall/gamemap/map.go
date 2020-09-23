@@ -7,7 +7,9 @@ import (
 
 //Map Keeps the track of Cells in game
 type Map struct {
-	Cells [][]*Cell
+	Cells    [][]*Cell
+	aIndexes map[int]interface{}
+	bIndexes map[int]interface{}
 }
 
 //NewMapRect Creates ne map with diffrent hight and width
@@ -20,6 +22,8 @@ func NewMapRect(hight, width int8) *Map {
 			gameMap.Cells[i] = append(gameMap.Cells[i], NewCellXY(2*i+1, 2*j+1))
 		}
 	}
+	gameMap.aIndexes = make(map[int]interface{})
+	gameMap.bIndexes = make(map[int]interface{})
 	return gameMap
 }
 
@@ -78,6 +82,8 @@ func (gameMap Map) Update(rawMap string) {
 	rawMap = strings.ReplaceAll(rawMap, "\n", "")
 	Aindexes := findIndex(rawMap, 'A')
 	Bindexes := findIndex(rawMap, 'B')
+	Aindexes = difference(Aindexes, gameMap.aIndexes)
+	Bindexes = difference(Bindexes, gameMap.bIndexes)
 
 	for _, ind := range Aindexes {
 		gameMap.setEdgeState(ind%9, ind/9, IsAEdge)
@@ -85,6 +91,9 @@ func (gameMap Map) Update(rawMap string) {
 	for _, ind := range Bindexes {
 		gameMap.setEdgeState(ind%9, ind/9, IsBEdge)
 	}
+	gameMap.aIndexes = appendIndexes(Aindexes, gameMap.aIndexes)
+	gameMap.bIndexes = appendIndexes(Bindexes, gameMap.bIndexes)
+	// gameMap.bIndexes = append(*gameMap.bIndexes, Bindexes...)
 
 	// fmt.Println(Aindexes)
 	// fmt.Println(Bindexes)
@@ -102,4 +111,21 @@ func findIndex(rawText string, char rune) []int {
 	}
 
 	return indexes
+}
+
+func difference(a []int, mb map[int]interface{}) []int {
+	var diff []int
+	for _, x := range a {
+		if _, found := mb[x]; !found {
+			diff = append(diff, x)
+		}
+	}
+	return diff
+}
+
+func appendIndexes(a []int, mb map[int]interface{}) map[int]interface{} {
+	for _, v := range a {
+		mb[v] = nil
+	}
+	return mb
 }
