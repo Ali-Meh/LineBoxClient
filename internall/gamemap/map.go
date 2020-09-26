@@ -41,7 +41,7 @@ func (gameMap Map) String() string {
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
+			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + /* strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) */ string(gameMap.Cells[i][j].OwnedBy) + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
@@ -59,22 +59,26 @@ func (gameMap Map) setEdgeState(X, Y int, edgeState EdgeState) {
 		//not the upest raw
 		if Y > 0 {
 			gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State = edgeState
+			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[3] = gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge
 			gameMap.Cells[(Y-2)/2][(X-1)/2].FilledEdgeCount++
 		}
 		//not the lowest raw
 		if Y < len(gameMap.Cells)*2 {
 			gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State = edgeState
+			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[0] = gameMap.Cells[(Y-2)/2][(X-1)/2].UpperEdge
 			gameMap.Cells[(Y)/2][(X-1)/2].FilledEdgeCount++
 		}
 	} else { //its left or right
 		//not the most left column
 		if X > 0 {
 			gameMap.Cells[Y/2][(X-1)/2].RightEdge.State = edgeState
+			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[2] = gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
 			gameMap.Cells[Y/2][(X-1)/2].FilledEdgeCount++
 		}
 		//not the most right column
 		if X < len(gameMap.Cells)*2 {
 			gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State = edgeState
+			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[1] = &gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
 			gameMap.Cells[(Y-1)/2][(X)/2].FilledEdgeCount++
 		}
 	}
@@ -103,6 +107,18 @@ func (gameMap Map) Update(rawMap string) {
 
 	// fmt.Println(Aindexes)
 	// fmt.Println(Bindexes)
+}
+
+// HasFreeEdge check if map has free edge
+func (gameMap Map) HasFreeEdge() bool {
+	for _, raw := range gameMap.Cells {
+		for _, cell := range raw {
+			if cell.FilledEdgeCount != 4 {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func findIndex(rawText string, char rune) []int {

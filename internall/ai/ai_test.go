@@ -20,7 +20,24 @@ func TestEvaluate(t *testing.T) {
 	//create map
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
-	score := ai.Evaluate(*gmap, true)
+	score := ai.Evaluate(*gmap, true, "A")
+	//assert the evaluation
+	assert.Equal(t, 20, score)
+}
+
+func TestMinimax(t *testing.T) {
+	testmap := `2-1
+0-0
+@A@A@
+-#B#-
+@B@-@
+-#A#A
+@-@B@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(2)
+	gmap.Update(testmap)
+	score := ai.MiniMax(*gmap, 3, true, -999999, 999999)
 	//assert the evaluation
 	assert.Equal(t, 20, score)
 }

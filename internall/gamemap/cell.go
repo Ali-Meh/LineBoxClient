@@ -1,6 +1,8 @@
 package gamemap
 
-import "strconv"
+import (
+	"strconv"
+)
 
 //EdgeState state of the Edge
 type EdgeState string
@@ -29,8 +31,10 @@ type Cell struct {
 	LowerEdge       Edge
 	LeftEdge        Edge
 	RightEdge       Edge
+	Edges           [4]*Edge
 	FilledEdgeCount int
 	Coordinate      Coordinates
+	OwnedBy         EdgeState
 }
 
 //NewCell Creates a cell with its edges
@@ -42,6 +46,8 @@ func NewCell(cellCoord Coordinates) *Cell {
 	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: IsFreeEdge}
 	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: IsFreeEdge}
 	cell.LowerEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y + 1}, State: IsFreeEdge}
+	cell.Edges = [4]*Edge{&cell.UpperEdge, &cell.LeftEdge, &cell.RightEdge, &cell.LowerEdge}
+	cell.OwnedBy = IsFreeEdge
 	return cell
 }
 
