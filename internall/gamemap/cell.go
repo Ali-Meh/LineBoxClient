@@ -29,7 +29,7 @@ type Cell struct {
 	LowerEdge       Edge
 	LeftEdge        Edge
 	RightEdge       Edge
-	filledEdgeCount int
+	FilledEdgeCount int
 	Coordinate      Coordinates
 }
 
@@ -37,7 +37,7 @@ type Cell struct {
 func NewCell(cellCoord Coordinates) *Cell {
 	cell := new(Cell)
 	cell.Coordinate = cellCoord
-	cell.filledEdgeCount = 0
+	cell.FilledEdgeCount = 0
 	cell.LeftEdge = Edge{Coordinates: Coordinates{X: cellCoord.X - 1, Y: cellCoord.Y}, State: IsFreeEdge}
 	cell.RightEdge = Edge{Coordinates: Coordinates{X: cellCoord.X + 1, Y: cellCoord.Y}, State: IsFreeEdge}
 	cell.UpperEdge = Edge{Coordinates: Coordinates{X: cellCoord.X, Y: cellCoord.Y - 1}, State: IsFreeEdge}
@@ -67,7 +67,7 @@ func (c Cell) String() string {
 	// res += "\t" + "D" + string(c.LowerEdge.State) + "\t"
 	//----------------------------------------------
 	res := "*\t" + string(c.UpperEdge.State) + "\t*\n"
-	res += string(c.LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(c.Coordinate.X)) + "," + strconv.Itoa(int(c.filledEdgeCount)) + "," + strconv.Itoa(int(c.Coordinate.Y)) + ")" + "\t" + string(c.RightEdge.State) + "\n"
+	res += string(c.LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(c.Coordinate.X)) + "," + strconv.Itoa(int(c.FilledEdgeCount)) + "," + strconv.Itoa(int(c.Coordinate.Y)) + ")" + "\t" + string(c.RightEdge.State) + "\n"
 	res += "*\t" + string(c.LowerEdge.State) + "\t*\n\n"
 	return res
 }

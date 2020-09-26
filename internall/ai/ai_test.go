@@ -20,7 +20,7 @@ func TestEvaluate(t *testing.T) {
 	//create map
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
-	ai.Evaluate(*gmap, true)
+	score := ai.Evaluate(*gmap, true)
 	//assert the evaluation
-	assert.Equal(t, "A", "A")
+	assert.Equal(t, 20, score)
 }
