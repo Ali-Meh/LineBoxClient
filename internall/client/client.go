@@ -5,6 +5,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net"
+
+	"github.com/ali-meh/LineBoxClient/internall/ai"
+	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
 
 //Client keeps track of the server and client name
@@ -47,7 +50,10 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 		message, _ := base64.StdEncoding.DecodeString(encMsg)
 
 		fmt.Printf("server ->: %s\n", message)
-		c.SendCord(6, 3)
+		gmap := gamemap.NewMapSquare(4)
+		gmap.Update(string(message))
+		move := ai.SelectMove(*gmap, (len(gmap.AIndexes)+len(gmap.BIndexes))/8+1, string(message[0:2]))
+		c.SendCord(move[0], move[1])
 		/*
 			c.SendCord(6, 3)
 			2-1

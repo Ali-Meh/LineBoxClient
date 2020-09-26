@@ -45,19 +45,56 @@ func TestMinimax(t *testing.T) {
 }
 
 func TestSelectMove(t *testing.T) {
-	testmap := `2-1
+	testmap := []struct {
+		tmap   string
+		depth  int
+		result []int8
+	}{
+		{
+			tmap: `2-1
 0-0
 @A@A@
 -#-#-
 @B@-@
 -#A#A
-@-@B@`
+@-@B@`,
+			depth:  7,
+			result: []int8{3, 2},
+		},
+	}
+
+	for _, test := range testmap {
+		t.Run("test map select", func(t *testing.T) {
+			//create map
+			gmap := gamemap.NewMapSquare(2)
+			gmap.Update(test.tmap)
+			fmt.Println(gmap)
+			move := ai.SelectMove(*gmap, test.depth)
+			//assert the evaluation
+			fmt.Println(move)
+			assert.Equal(t, test.result, move)
+		})
+	}
+}
+
+func TestSelect2(t *testing.T) {
+	testmap := `2-1
+0-0
+@-@A@-@-@
+-#-#-#-#-
+@-@-@-@-@
+-#-#-#-#-
+@-@A@-@-@
+-#-#-#-#B
+@-@-@-@-@
+-#-#-#-#-
+@-@-@-@B@`
 
 	//create map
-	gmap := gamemap.NewMapSquare(2)
+	gmap := gamemap.NewMapSquare(4)
 	gmap.Update(testmap)
 	fmt.Println(gmap)
-	move := ai.SelectMove(*gmap)
+	move := ai.SelectMove(*gmap, 3)
 	//assert the evaluation
 	fmt.Println(move)
 	assert.Equal(t, []int8{3, 2}, move)

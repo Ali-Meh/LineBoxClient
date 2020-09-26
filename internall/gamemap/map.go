@@ -8,8 +8,8 @@ import (
 //Map Keeps the track of Cells in game
 type Map struct {
 	Cells    [][]*Cell
-	aIndexes map[int]interface{}
-	bIndexes map[int]interface{}
+	AIndexes map[int]interface{}
+	BIndexes map[int]interface{}
 }
 
 //NewMapRect Creates ne map with diffrent hight and width
@@ -22,8 +22,8 @@ func NewMapRect(hight, width int8) *Map {
 			gameMap.Cells[i] = append(gameMap.Cells[i], NewCellXY(2*i+1, 2*j+1))
 		}
 	}
-	gameMap.aIndexes = make(map[int]interface{})
-	gameMap.bIndexes = make(map[int]interface{})
+	gameMap.AIndexes = make(map[int]interface{})
+	gameMap.BIndexes = make(map[int]interface{})
 	return gameMap
 }
 
@@ -92,8 +92,8 @@ func (gameMap Map) Update(rawMap string) {
 	rawMap = strings.ReplaceAll(rawMap, "\n", "")
 	Aindexes := findIndex(rawMap, 'A')
 	Bindexes := findIndex(rawMap, 'B')
-	Aindexes = difference(Aindexes, gameMap.aIndexes)
-	Bindexes = difference(Bindexes, gameMap.bIndexes)
+	Aindexes = difference(Aindexes, gameMap.AIndexes)
+	Bindexes = difference(Bindexes, gameMap.BIndexes)
 	Xlength := len(gameMap.Cells[0])*2 + 1
 	Ylength := len(gameMap.Cells)*2 + 1
 
@@ -103,8 +103,8 @@ func (gameMap Map) Update(rawMap string) {
 	for _, ind := range Bindexes {
 		gameMap.SetEdgeState(ind%Xlength, ind/Ylength, IsBEdge)
 	}
-	gameMap.aIndexes = appendIndexes(Aindexes, gameMap.aIndexes)
-	gameMap.bIndexes = appendIndexes(Bindexes, gameMap.bIndexes)
+	gameMap.AIndexes = appendIndexes(Aindexes, gameMap.AIndexes)
+	gameMap.BIndexes = appendIndexes(Bindexes, gameMap.BIndexes)
 	// gameMap.bIndexes = append(*gameMap.bIndexes, Bindexes...)
 
 	// fmt.Println(Aindexes)

@@ -1,8 +1,6 @@
 package ai
 
 import (
-	"fmt"
-
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
 
@@ -25,7 +23,7 @@ func Evaluate(gmap gamemap.Map, maximizingTurn bool, filler string) int {
 			}
 		}
 	}
-	fmt.Println(score)
+	// fmt.Println(score)
 	// if maximizingTurn {
 	return score
 	// }
@@ -97,7 +95,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 }
 
 //SelectMove find and retrun best move
-func SelectMove(gmap gamemap.Map) []int8 {
+func SelectMove(gmap gamemap.Map, depth int) []int8 {
 	bestVal := -99999999
 	turn := true
 	move := []int8{0, 0}
@@ -113,7 +111,7 @@ func SelectMove(gmap gamemap.Map) []int8 {
 							cell.OwnedBy = edge.State
 							turn = !turn
 						}
-						score := MiniMax(clonedmap, 7, turn, -999999, 999999)
+						score := MiniMax(clonedmap, depth, turn, -999999, 999999)
 						if score > bestVal {
 							bestVal = score
 							move = []int8{edge.X, edge.Y}
