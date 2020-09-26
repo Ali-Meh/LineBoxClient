@@ -57,10 +57,13 @@ func TestUpdateMap(t *testing.T) {
 
 	gmap := gamemap.NewMapSquare(4)
 	gmap.Update(testmap[0])
+	// fmt.Println(gmap)
+
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[0][1].UpperEdge.State)
 	assert.Equal(t, gamemap.IsBEdge, gmap.Cells[3][3].LowerEdge.State)
 
 	gmap.Update(testmap[1])
+	// fmt.Println(gmap)
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[1][1].RightEdge.State)
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[1][2].LeftEdge.State)
 	assert.Equal(t, gamemap.IsBEdge, gmap.Cells[1][1].LowerEdge.State)

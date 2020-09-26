@@ -37,15 +37,15 @@ func (gameMap Map) String() string {
 	for i := 0; i < len(gameMap.Cells); i++ {
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += "*\t" + string(gameMap.Cells[i][j].UpperEdge.State) + "\t*"
+			res += "*\t\t" + string(gameMap.Cells[i][j].UpperEdge.State) + "\t\t*"
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + "," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
+			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + strconv.Itoa(int(gameMap.Cells[i][j].filledEdgeCount)) + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += "*\t" + string(gameMap.Cells[i][j].LowerEdge.State) + "\t*"
+			res += "*\t\t" + string(gameMap.Cells[i][j].LowerEdge.State) + "\t\t*"
 		}
 	}
 	res += "\n"
@@ -59,19 +59,23 @@ func (gameMap Map) setEdgeState(X, Y int, edgeState EdgeState) {
 		//not the upest raw
 		if Y > 0 {
 			gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State = edgeState
+			gameMap.Cells[(Y-2)/2][(X-1)/2].filledEdgeCount++
 		}
 		//not the lowest raw
 		if Y < len(gameMap.Cells)*2 {
 			gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State = edgeState
+			gameMap.Cells[(Y)/2][(X-1)/2].filledEdgeCount++
 		}
 	} else { //its left or right
 		//not the most left column
 		if X > 0 {
 			gameMap.Cells[Y/2][(X-1)/2].RightEdge.State = edgeState
+			gameMap.Cells[Y/2][(X-1)/2].filledEdgeCount++
 		}
 		//not the most right column
 		if X < len(gameMap.Cells)*2 {
 			gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State = edgeState
+			gameMap.Cells[(Y-1)/2][(X)/2].filledEdgeCount++
 		}
 	}
 }
