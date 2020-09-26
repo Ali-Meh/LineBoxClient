@@ -1,8 +1,9 @@
-package gamemap_test
+package ai_test
 
 import (
 	"testing"
 
+	"github.com/ali-meh/LineBoxClient/internall/ai"
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,9 +18,9 @@ func TestEvaluate(t *testing.T) {
 @-@B@`
 
 	//create map
-	gmap := gamemap.NewMapSquare(4)
+	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
-
+	ai.Evaluate(*gmap, true)
 	//assert the evaluation
 	assert.Equal(t, "A", "A")
 }

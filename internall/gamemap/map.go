@@ -88,12 +88,14 @@ func (gameMap Map) Update(rawMap string) {
 	Bindexes := findIndex(rawMap, 'B')
 	Aindexes = difference(Aindexes, gameMap.aIndexes)
 	Bindexes = difference(Bindexes, gameMap.bIndexes)
+	Xlength := len(gameMap.Cells[0])*2 + 1
+	Ylength := len(gameMap.Cells)*2 + 1
 
 	for _, ind := range Aindexes {
-		gameMap.setEdgeState(ind%9, ind/9, IsAEdge)
+		gameMap.setEdgeState(ind%Xlength, ind/Ylength, IsAEdge)
 	}
 	for _, ind := range Bindexes {
-		gameMap.setEdgeState(ind%9, ind/9, IsBEdge)
+		gameMap.setEdgeState(ind%Xlength, ind/Ylength, IsBEdge)
 	}
 	gameMap.aIndexes = appendIndexes(Aindexes, gameMap.aIndexes)
 	gameMap.bIndexes = appendIndexes(Bindexes, gameMap.bIndexes)
