@@ -43,3 +43,22 @@ func TestMinimax(t *testing.T) {
 	//assert the evaluation
 	assert.Equal(t, 20, score)
 }
+
+func TestSelectMove(t *testing.T) {
+	testmap := `2-1
+0-0
+@A@A@
+-#-#-
+@B@-@
+-#A#A
+@-@B@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(2)
+	gmap.Update(testmap)
+	fmt.Println(gmap)
+	move := ai.SelectMove(*gmap)
+	//assert the evaluation
+	fmt.Println(move)
+	assert.Equal(t, []int8{3, 2}, move)
+}

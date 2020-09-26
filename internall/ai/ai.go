@@ -96,6 +96,36 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 	}
 }
 
+//SelectMove find and retrun best move
+func SelectMove(gmap gamemap.Map) []int8 {
+	bestVal := -99999999
+	turn := true
+	move := []int8{0, 0}
+	for i := range gmap.Cells {
+		for _, cell := range gmap.Cells[i] {
+			if cell.FilledEdgeCount < 4 {
+				for _, edge := range cell.Edges {
+					if edge.State == gamemap.IsFreeEdge {
+						clonedmap := gmap.Clone()
+						clonedmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsAEdge)
+						// cell.FilledEdgeCount++
+						if cell.FilledEdgeCount == 4 {
+							cell.OwnedBy = edge.State
+							turn = !turn
+						}
+						score := MiniMax(clonedmap, 7, turn, -999999, 999999)
+						if score > bestVal {
+							bestVal = score
+							move = []int8{edge.X, edge.Y}
+						}
+					}
+				}
+			}
+		}
+	}
+	return move
+}
+
 func max(a, b int) int {
 	if a > b {
 		return a
