@@ -14,7 +14,7 @@ func Evaluate(gmap gamemap.Map, maximizingTurn bool, filler string) int {
 	for _, raw := range gmap.Cells {
 		for _, cell := range raw {
 			if cell.FilledEdgeCount == 3 {
-				score += 10
+				score -= 10
 			}
 			if cell.FilledEdgeCount == 4 {
 				if filler == string(cell.OwnedBy) {
@@ -25,7 +25,7 @@ func Evaluate(gmap gamemap.Map, maximizingTurn bool, filler string) int {
 			}
 		}
 	}
-	fmt.Println(gmap)
+	fmt.Println(score)
 	// if maximizingTurn {
 	return score
 	// }
@@ -48,15 +48,15 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				if cell.FilledEdgeCount < 4 {
 					for _, edge := range cell.Edges {
 						if edge.State == gamemap.IsFreeEdge {
-							edge.State = gamemap.IsAEdge
-							cell.FilledEdgeCount++
+							gmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsAEdge)
+							// cell.FilledEdgeCount++
 							if cell.FilledEdgeCount == 4 {
 								cell.OwnedBy = edge.State
 								turn = !turn
 							}
-							score := MiniMax(gmap, depth-1, turn, alpha, beta)
+							score := MiniMax(gmap.Clone(), depth-1, turn, alpha, beta)
 							bestVal = max(score, bestVal)
-							alpha = max(alpha, bestVal)
+							alpha = max(alpha, score)
 							if beta <= alpha {
 								break
 							}
@@ -65,6 +65,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
+		// fmt.Println(gmap)
 		return bestVal
 	} else {
 		bestVal := 99999999
@@ -73,15 +74,15 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				if cell.FilledEdgeCount < 4 {
 					for _, edge := range cell.Edges {
 						if edge.State == gamemap.IsFreeEdge {
-							edge.State = gamemap.IsBEdge
-							cell.FilledEdgeCount++
+							gmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsBEdge)
+							// cell.FilledEdgeCount++
 							if cell.FilledEdgeCount == 4 {
 								cell.OwnedBy = edge.State
 								turn = !turn
 							}
-							score := MiniMax(gmap, depth-1, turn, alpha, beta)
+							score := MiniMax(gmap.Clone(), depth-1, turn, alpha, beta)
 							bestVal = min(score, bestVal)
-							beta = min(beta, bestVal)
+							beta = min(beta, score)
 							if beta <= alpha {
 								break
 							}
@@ -90,6 +91,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
+		// fmt.Println(gmap)
 		return bestVal
 	}
 }

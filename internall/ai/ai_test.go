@@ -1,6 +1,7 @@
 package ai_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/ali-meh/LineBoxClient/internall/ai"
@@ -37,7 +38,8 @@ func TestMinimax(t *testing.T) {
 	//create map
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
-	score := ai.MiniMax(*gmap, 3, true, -999999, 999999)
+	fmt.Println(gmap)
+	score := ai.MiniMax(*gmap, 7, true, -999999, 999999)
 	//assert the evaluation
 	assert.Equal(t, 20, score)
 }

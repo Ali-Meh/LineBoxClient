@@ -53,33 +53,35 @@ func (gameMap Map) String() string {
 }
 
 //SetEdgeState sets the edge if is full or empity
-func (gameMap Map) setEdgeState(X, Y int, edgeState EdgeState) {
+func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) {
 	//its up and down
 	if X%2 == 1 {
 		//not the upest raw
-		if Y > 0 {
+		if Y > 0 && gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State == IsFreeEdge {
 			gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State = edgeState
 			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[3] = gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge
 			gameMap.Cells[(Y-2)/2][(X-1)/2].FilledEdgeCount++
 		}
 		//not the lowest raw
-		if Y < len(gameMap.Cells)*2 {
+		if Y < len(gameMap.Cells)*2 && gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State == IsFreeEdge {
 			gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State = edgeState
 			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[0] = gameMap.Cells[(Y-2)/2][(X-1)/2].UpperEdge
 			gameMap.Cells[(Y)/2][(X-1)/2].FilledEdgeCount++
 		}
 	} else { //its left or right
 		//not the most left column
-		if X > 0 {
+		if X > 0 && gameMap.Cells[Y/2][(X-1)/2].RightEdge.State == IsFreeEdge {
 			gameMap.Cells[Y/2][(X-1)/2].RightEdge.State = edgeState
 			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[2] = gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
 			gameMap.Cells[Y/2][(X-1)/2].FilledEdgeCount++
 		}
 		//not the most right column
 		if X < len(gameMap.Cells)*2 {
-			gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State = edgeState
-			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[1] = &gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
-			gameMap.Cells[(Y-1)/2][(X)/2].FilledEdgeCount++
+			if gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State == IsFreeEdge {
+				gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State = edgeState
+				// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[1] = &gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
+				gameMap.Cells[(Y-1)/2][(X)/2].FilledEdgeCount++
+			}
 		}
 	}
 }
@@ -96,10 +98,10 @@ func (gameMap Map) Update(rawMap string) {
 	Ylength := len(gameMap.Cells)*2 + 1
 
 	for _, ind := range Aindexes {
-		gameMap.setEdgeState(ind%Xlength, ind/Ylength, IsAEdge)
+		gameMap.SetEdgeState(ind%Xlength, ind/Ylength, IsAEdge)
 	}
 	for _, ind := range Bindexes {
-		gameMap.setEdgeState(ind%Xlength, ind/Ylength, IsBEdge)
+		gameMap.SetEdgeState(ind%Xlength, ind/Ylength, IsBEdge)
 	}
 	gameMap.aIndexes = appendIndexes(Aindexes, gameMap.aIndexes)
 	gameMap.bIndexes = appendIndexes(Bindexes, gameMap.bIndexes)
@@ -107,6 +109,30 @@ func (gameMap Map) Update(rawMap string) {
 
 	// fmt.Println(Aindexes)
 	// fmt.Println(Bindexes)
+}
+
+// Clone retruns new identical map
+func (gameMap Map) Clone() Map {
+	gmap := NewMapRect(int8(len(gameMap.Cells)), int8(len(gameMap.Cells[0])))
+	for i, raw := range gameMap.Cells {
+		gmap.Cells[i] = make([]*Cell, len(raw))
+		for j, cell := range raw {
+			gmap.Cells[i][j] = NewCell(cell.Coordinate)
+			gmap.Cells[i][j].FilledEdgeCount = cell.FilledEdgeCount
+			gmap.Cells[i][j].LeftEdge = cell.LeftEdge
+			gmap.Cells[i][j].RightEdge = cell.RightEdge
+			gmap.Cells[i][j].UpperEdge = cell.UpperEdge
+			gmap.Cells[i][j].LowerEdge = cell.LowerEdge
+			gmap.Cells[i][j].OwnedBy = cell.OwnedBy
+			gmap.Cells[i][j].Edges = [4]*Edge{&gmap.Cells[i][j].UpperEdge, &gmap.Cells[i][j].LeftEdge, &gmap.Cells[i][j].RightEdge, &gmap.Cells[i][j].LowerEdge}
+		}
+		// for j, cell := range raw {
+		// 	fmt.Println(&gmap.Cells[i][j], &cell, cell, &gameMap.Cells[i][j])
+		// 	gmap.Cells[i][j] = gameMap.Cells[i][j]
+		// 	fmt.Println(&gmap.Cells[i][j], &cell, cell, &gameMap.Cells[i][j])
+		// }
+	}
+	return *gmap
 }
 
 // HasFreeEdge check if map has free edge
