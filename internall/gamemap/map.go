@@ -19,7 +19,7 @@ func NewMapRect(hight, width int8) *Map {
 	for i := int8(0); i < hight; i++ {
 		gameMap.Cells[i] = make([]*Cell, 0)
 		for j := int8(0); j < width; j++ {
-			gameMap.Cells[i] = append(gameMap.Cells[i], NewCellXY(2*i+1, 2*j+1))
+			gameMap.Cells[i] = append(gameMap.Cells[i], NewCellXY(2*j+1, 2*i+1))
 		}
 	}
 	gameMap.AIndexes = make(map[int]interface{})
@@ -131,7 +131,13 @@ func (gameMap Map) Clone() Map {
 		// 	gmap.Cells[i][j] = gameMap.Cells[i][j]
 		// 	fmt.Println(&gmap.Cells[i][j], &cell, cell, &gameMap.Cells[i][j])
 		// }
+
 	}
+	// fmt.Println("\n------------------------------------------------")
+	// fmt.Println(gmap)
+	// fmt.Println("cloned from")
+	// fmt.Println(gameMap)
+	// fmt.Println("------------------------------------------------")
 	return *gmap
 }
 
