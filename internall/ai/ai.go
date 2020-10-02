@@ -33,7 +33,6 @@ func Evaluate(gmap gamemap.Map, maximizingTurn bool, maximizer ...string) int {
 			}
 		}
 	}
-	fmt.Println(gmap)
 	// fmt.Println(score)
 	// if maximizingTurn {
 	return score
@@ -44,32 +43,33 @@ func Evaluate(gmap gamemap.Map, maximizingTurn bool, maximizer ...string) int {
 //MiniMax Algo Implementation
 func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) int {
 	if depth == 0 || !gmap.HasFreeEdge() {
-		fmt.Println("**************final map*************")
-		fmt.Println("depth: ", depth, "has free: ", gmap.HasFreeEdge())
-		var eval int
+		eval := Evaluate(gmap, maximizingTurn)
 
-		eval = Evaluate(gmap, maximizingTurn)
+		// fmt.Println("**************final map*************")
+		// fmt.Println(gmap)
+		// fmt.Println("depth: ", depth, "has free: ", gmap.HasFreeEdge())
+		// fmt.Println("is A:", maximizingTurn)
+		// fmt.Println("eval: ", eval)
 
-		fmt.Println("is A:", maximizingTurn)
-		fmt.Println("eval: ", eval)
 		return eval
 	}
 	turn := !maximizingTurn
 	if maximizingTurn {
 		bestVal := -99999999
 		for i := range gmap.Cells {
-			for _, cell := range gmap.Cells[i] {
+			for j, cell := range gmap.Cells[i] {
 				if cell.FilledEdgeCount < 4 {
 					for _, edge := range cell.Edges {
 						if edge.State == gamemap.IsFreeEdge {
-							fmt.Println("depth:", depth, "MAX 🔼 Chose:", edge.Coordinates)
-							gmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsAEdge)
+							// fmt.Println("depth:", depth, "MAX 🔼 Chose:", edge.Coordinates)
+							clonedMap := gmap.Clone()
+							clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsAEdge)
 							// cell.FilledEdgeCount++
-							if cell.FilledEdgeCount == 4 {
+							if clonedMap.Cells[i][j].FilledEdgeCount == 4 {
 								cell.OwnedBy = edge.State
 								turn = !turn
 							}
-							score := MiniMax(gmap.Clone(), depth-1, turn, alpha, beta)
+							score := MiniMax(clonedMap, depth-1, turn, alpha, beta)
 							bestVal = max(score, bestVal)
 							alpha = max(alpha, score)
 							if beta <= alpha {
@@ -84,18 +84,19 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 	} else {
 		bestVal := 99999999
 		for i := range gmap.Cells {
-			for _, cell := range gmap.Cells[i] {
+			for j, cell := range gmap.Cells[i] {
 				if cell.FilledEdgeCount < 4 {
 					for _, edge := range cell.Edges {
 						if edge.State == gamemap.IsFreeEdge {
-							fmt.Println("depth:", depth, "MIN 🔻 Chose:", edge.Coordinates)
-							gmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsBEdge)
+							// fmt.Println("depth:", depth, "MIN 🔻 Chose:", edge.Coordinates)
+							clonedMap := gmap.Clone()
+							clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.IsBEdge)
 							// cell.FilledEdgeCount++
-							if cell.FilledEdgeCount == 4 {
+							if clonedMap.Cells[i][j].FilledEdgeCount == 4 {
 								cell.OwnedBy = edge.State
 								turn = !turn
 							}
-							score := MiniMax(gmap.Clone(), depth-1, turn, alpha, beta)
+							score := MiniMax(clonedMap, depth-1, turn, alpha, beta)
 							bestVal = min(score, bestVal)
 							beta = min(beta, score)
 							if beta <= alpha {
