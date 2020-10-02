@@ -1,8 +1,6 @@
 package ai
 
 import (
-	"fmt"
-
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
 
@@ -90,12 +88,12 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
-		if depth > 1 {
-			fmt.Println(gmap)
-			fmt.Println("depth: ", depth)
-			fmt.Println("Maximizer🔼")
-			fmt.Println("returning", bestVal)
-		}
+		// if depth > 1 {
+		// 	fmt.Println(gmap)
+		// 	fmt.Println("depth: ", depth)
+		// 	fmt.Println("Maximizer🔼")
+		// 	fmt.Println("returning", bestVal)
+		// }
 		return bestVal
 	} else {
 		bestVal := 99999999
@@ -124,12 +122,12 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
-		if bestVal == -80 && depth > 2 {
-			fmt.Println(gmap)
-			fmt.Println("depth: ", depth)
-			fmt.Println("MINIMIZER 🔻")
-			fmt.Println("returning", bestVal)
-		}
+		// if bestVal == -80 && depth > 2 {
+		// 	fmt.Println(gmap)
+		// 	fmt.Println("depth: ", depth)
+		// 	fmt.Println("MINIMIZER 🔻")
+		// 	fmt.Println("returning", bestVal)
+		// }
 		return bestVal
 	}
 }
@@ -151,7 +149,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
 			if cell.FilledEdgeCount < 4 {
 				for _, edge := range cell.Edges {
 					if edge.State == gamemap.IsFreeEdge {
-						fmt.Printf("========================>the edge is : %v \n", edge.Coordinates)
+						// fmt.Printf("========================>the edge is : %v \n", edge.Coordinates)
 						clonedmap := gmap.Clone()
 
 						// cell.FilledEdgeCount++

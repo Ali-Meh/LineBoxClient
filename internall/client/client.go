@@ -52,7 +52,10 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 		fmt.Printf("server ->: %s\n", message)
 		gmap := gamemap.NewMapSquare(4)
 		gmap.Update(string(message))
-		move := ai.SelectMove(*gmap, (len(gmap.AIndexes)+len(gmap.BIndexes))/8+1, string(message[0:2]))
+		// depth := 1.0
+		depth := (float64(len(gmap.AIndexes)+len(gmap.BIndexes))/float64(len(gmap.Cells)*len(gmap.Cells[0])*4))*4 + 2
+		fmt.Println("Depth set to ", depth)
+		move := ai.SelectMove(*gmap, int(depth), string(message[0:2]))
 		c.SendCord(move[0], move[1])
 		/*
 			c.SendCord(6, 3)
