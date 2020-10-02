@@ -53,7 +53,8 @@ func (gameMap Map) String() string {
 }
 
 //SetEdgeState sets the edge if is full or empity
-func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) {
+func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) bool {
+	res := false
 	//its up and down
 	if X%2 == 1 {
 		//not the upest raw
@@ -61,12 +62,20 @@ func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) {
 			gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State = edgeState
 			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[3] = gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge
 			gameMap.Cells[(Y-2)/2][(X-1)/2].FilledEdgeCount++
+			if gameMap.Cells[(Y-2)/2][(X-1)/2].FilledEdgeCount == 4 {
+				gameMap.Cells[(Y-2)/2][(X-1)/2].OwnedBy = edgeState
+				res = true
+			}
 		}
 		//not the lowest raw
 		if Y < len(gameMap.Cells)*2 && gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State == IsFreeEdge {
 			gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State = edgeState
 			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[0] = gameMap.Cells[(Y-2)/2][(X-1)/2].UpperEdge
 			gameMap.Cells[(Y)/2][(X-1)/2].FilledEdgeCount++
+			if gameMap.Cells[(Y)/2][(X-1)/2].FilledEdgeCount == 4 {
+				gameMap.Cells[(Y)/2][(X-1)/2].OwnedBy = edgeState
+				res = true
+			}
 		}
 	} else { //its left or right
 		//not the most left column
@@ -74,6 +83,10 @@ func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) {
 			gameMap.Cells[Y/2][(X-1)/2].RightEdge.State = edgeState
 			// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[2] = gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
 			gameMap.Cells[Y/2][(X-1)/2].FilledEdgeCount++
+			if gameMap.Cells[Y/2][(X-1)/2].FilledEdgeCount == 4 {
+				gameMap.Cells[Y/2][(X-1)/2].OwnedBy = edgeState
+				res = true
+			}
 		}
 		//not the most right column
 		if X < len(gameMap.Cells)*2 {
@@ -81,9 +94,14 @@ func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) {
 				gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State = edgeState
 				// gameMap.Cells[(Y-2)/2][(X-1)/2].Edges[1] = &gameMap.Cells[(Y-2)/2][(X-1)/2].RightEdge
 				gameMap.Cells[(Y-1)/2][(X)/2].FilledEdgeCount++
+				if gameMap.Cells[(Y-1)/2][(X)/2].FilledEdgeCount == 4 {
+					gameMap.Cells[(Y-1)/2][(X)/2].OwnedBy = edgeState
+					res = true
+				}
 			}
 		}
 	}
+	return res
 }
 
 //Update updates the game map according to the raw text it gets

@@ -48,41 +48,93 @@ func TestSelectMove(t *testing.T) {
 	testmap := []struct {
 		tmap   string
 		depth  int
+		turn   string
 		result []int8
 	}{
+		// 		{
+		// 			tmap: `2-1
+		// 0-0
+		// @A@-@
+		// -#-#-
+		// @B@-@
+		// -#A#-
+		// @-@B@`,
+		// 			turn:   "A",
+		// 			depth:  7,
+		// 			result: []int8{3, 0},
+		// 		},
+		// 		{
+		// 			tmap: `2-1
+		// 0-0
+		// @A@A@
+		// -#-#-
+		// @B@-@
+		// -#A#-
+		// @-@B@`,
+		// 			depth:  4,
+		// 			turn:   "B",
+		// 			result: []int8{4, 1},
+		// 		},
+		// 		{
+		// 			tmap: `2-1
+		// 0-0
+		// @A@A@
+		// B#-#-
+		// @B@-@
+		// -#A#-
+		// @-@B@`,
+		// 			turn:   "A",
+		// 			depth:  4,
+		// 			result: []int8{2, 1},
+		// 		},
+		// 		{
+		// 			tmap: `2-1
+		// 0-0
+		// @A@A@
+		// B#A#-
+		// @B@-@
+		// -#A#-
+		// @-@B@`,
+		// 			turn:   "A",
+		// 			depth:  4,
+		// 			result: []int8{0, 3},
+		// 		},
+		// 		{
+		// 			tmap: `2-1
+		// 0-0
+		// @A@A@
+		// B#A#-
+		// @B@-@
+		// A#A#-
+		// @-@B@`,
+		// 			turn:   "B",
+		// 			depth:  4,
+		// 			result: []int8{1, 4},
+		// 		},
 		{
 			tmap: `2-1
 0-0
-@A@-@
--#-#-
+@A@A@
+B#A#-
 @B@-@
--#A#-
-@-@B@`,
+A#A#-
+@B@B@`,
+			turn:   "B",
 			depth:  4,
-			result: []int8{3, 2},
+			result: []int8{4, 1},
 		},
-		/* 		{
-					tmap: `2-1
-		0-0
-		@A@-@
-		A#-#-
-		@B@-@
-		-#A#-
-		@-@B@`,
-					depth:  7,
-					result: []int8{3, 2},
-				},
-				{
-					tmap: `2-1
-		0-0
-		@A@A@
-		-#-#-
-		@B@-@
-		-#A#A
-		@-@B@`,
-					depth:  7,
-					result: []int8{3, 2},
-				}, */
+		// 		{
+		// 			tmap: `2-1
+		// 0-0
+		// @A@A@
+		// -#-#B
+		// @B@-@
+		// -#A#-
+		// @-@B@`,
+		// 			turn:   "A",
+		// 			depth:  4,
+		// 			result: []int8{0, 3},
+		// 		},
 	}
 
 	for _, test := range testmap {
@@ -91,7 +143,7 @@ func TestSelectMove(t *testing.T) {
 			gmap := gamemap.NewMapSquare(2)
 			gmap.Update(test.tmap)
 			fmt.Println(gmap)
-			move := ai.SelectMove(*gmap, test.depth, "A")
+			move := ai.SelectMove(*gmap, test.depth, test.turn)
 			//assert the evaluation
 			fmt.Println(move)
 			assert.Equal(t, test.result, move)
