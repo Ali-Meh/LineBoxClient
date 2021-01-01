@@ -5,42 +5,58 @@ import (
 )
 
 var (
-	//maximizerSamble indecates the maximizer player symbol
-	maximizerSamble string
-	minimizerSamble string
+	//maximizerSambol indecates the maximizer player symbol
+	maximizerSambol string = "A"
+	minimizerSambol string = "B"
 )
 
 //Evaluate will evaluate the score of the current map
 //will return for +10 for every 3 filled
 func Evaluate(gmap gamemap.Map, maximizingTurn bool, maximizer ...string) int {
 	if maximizer != nil {
-		maximizerSamble = maximizer[0]
-		if maximizerSamble == "A" {
-			minimizerSamble = "B"
+		maximizerSambol = maximizer[0]
+		if maximizerSambol == "A" {
+			minimizerSambol = "B"
 		} else {
-			minimizerSamble = "A"
+			minimizerSambol = "A"
 		}
 	}
 	score := 0
 	//TODO for those are 3 dim find if the others
 	for _, raw := range gmap.Cells {
 		for _, cell := range raw {
-			// if cell.FilledEdgeCount == 3 {
-			// 	if maximizingTurn {
-			// 		score -= 20
-			// 	} else {
-			// 		score += 20
-			// 	}
-			// }
-			if cell.FilledEdgeCount == 4 {
-				if maximizerSamble == string(cell.OwnedBy) {
+			switch cell.FilledEdgeCount {
+			case 3:
+				if maximizingTurn {
+					score += 20
+				} else {
+					score -= 20
+				}
+			case 4:
+				if maximizerSambol == string(cell.OwnedBy) {
 					score += 20
 				} else {
 					score -= 20
 				}
 			}
+			// if cell.FilledEdgeCount == 3 {
+			// 	if maximizingTurn {
+			// 		score += 20
+			// 	} else {
+			// 		score -= 20
+			// 	}
+			// }
+			// if cell.FilledEdgeCount == 4 {
+			// 	if maximizerSambol == string(cell.OwnedBy) {
+			// 		score += 20
+			// 	} else {
+			// 		score -= 20
+			// 	}
+			// }
 		}
 	}
+	// fmt.Println("EVALUATING MAP: ", score, maximizingTurn)
+	// fmt.Println(gmap)
 	// fmt.Println(score)
 	// if maximizingTurn {
 	return score
@@ -72,7 +88,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 							// fmt.Println("depth:", depth, "MAX 🔼 Chose:", edge.Coordinates)
 							clonedMap := gmap.Clone()
 							// cell.FilledEdgeCount++
-							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSamble)) {
+							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSambol)) {
 								// clonedMap.Cells[i][j].OwnedBy = gamemap.IsAEdge
 								turn = !turn
 							}
@@ -106,7 +122,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 							clonedMap := gmap.Clone()
 
 							// cell.FilledEdgeCount++
-							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(minimizerSamble)) {
+							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(minimizerSambol)) {
 								// clonedMap.Cells[i][j].OwnedBy = gamemap.IsBEdge
 								turn = !turn
 							}
@@ -122,7 +138,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
-		// if bestVal == -80 && depth > 2 {
+		// if depth > 2 {
 		// 	fmt.Println(gmap)
 		// 	fmt.Println("depth: ", depth)
 		// 	fmt.Println("MINIMIZER 🔻")
@@ -134,11 +150,11 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 
 //SelectMove find and retrun best move
 func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
-	maximizerSamble = maximizer
-	if maximizerSamble == "A" {
-		minimizerSamble = "B"
+	maximizerSambol = maximizer
+	if maximizerSambol == "A" {
+		minimizerSambol = "B"
 	} else {
-		minimizerSamble = "A"
+		minimizerSambol = "A"
 	}
 
 	bestVal := -99999999
@@ -153,7 +169,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
 						clonedmap := gmap.Clone()
 
 						// cell.FilledEdgeCount++
-						if clonedmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSamble)) {
+						if clonedmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSambol)) {
 							// clonedmap.Cells[i][j].OwnedBy = gamemap.IsAEdge
 							turn = !turn
 						}
@@ -168,6 +184,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
 			}
 		}
 	}
+	println("selecting: [", move[0], ",", move[1], "] with score: ", bestVal)
 	return move
 }
 
