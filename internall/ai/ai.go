@@ -1,6 +1,7 @@
 package ai
 
 import (
+	"fmt"
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
 
@@ -184,7 +185,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
 			}
 		}
 	}
-	println("selecting: [", move[0], ",", move[1], "] with score: ", bestVal)
+	fmt.Println("selecting: [", move[0], ",", move[1], "] with score: ", bestVal)
 	return move
 }
 

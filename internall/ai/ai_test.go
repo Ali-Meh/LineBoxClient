@@ -66,18 +66,7 @@ func TestSelectMove(t *testing.T) {
 		turn   string
 		result []int8
 	}{
- 		{
-			tmap: `2-1
-0-0
-@A@-@
--#-#-
-@B@-@
--#A#-
-@-@B@`,
-			turn:   "A",
-			depth:  7,
-			result: []int8{3, 0},
-		}, 
+ 		
 		{
 			tmap: `2-1
 0-0
@@ -89,6 +78,17 @@ func TestSelectMove(t *testing.T) {
 			depth:  3,
 			turn:   "B",
 			result: []int8{4, 1},
+		},/*  {
+			tmap: `2-1
+0-0
+@A@-@
+-#-#-
+@B@-@
+-#A#-
+@-@B@`,
+			turn:   "A",
+			depth:  7,
+			result: []int8{3, 0},
 		}, 
 		{
 			tmap: `2-1
@@ -149,7 +149,7 @@ A#A#-
 			turn:   "A",
 			depth:  4,
 			result: []int8{0, 3},
-		},
+		}, */
 	}
 
 	for i, test := range testmap {
@@ -169,9 +169,9 @@ A#A#-
 func TestSelect2(t *testing.T) {
 	testmap := `2-1
 0-0
-@-@A@-@-@
--#-#-#-#-
-@-@-@-@-@
+@A@A@-@-@
+B#-#-#-#-
+@A@-@-@-@
 -#-#-#-#-
 @-@A@-@-@
 -#-#-#-#B
@@ -186,5 +186,5 @@ func TestSelect2(t *testing.T) {
 	move := ai.SelectMove(*gmap, 3, "A")
 	//assert the evaluation
 	fmt.Println(move)
-	assert.Equal(t, []int8{3, 2}, move)
+	assert.Equal(t, []int8{2, 1}, move)
 }

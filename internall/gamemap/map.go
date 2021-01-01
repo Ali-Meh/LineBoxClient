@@ -41,7 +41,7 @@ func (gameMap Map) String() string {
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + /* strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) */ string(gameMap.Cells[i][j].OwnedBy) + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
+			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + /* strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) */ string(gameMap.Cells[i][j].OwnedBy) + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
