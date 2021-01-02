@@ -54,7 +54,9 @@ func TestMinimax(t *testing.T) {
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
 	fmt.Println(gmap)
-	score := ai.MiniMax(*gmap, 7, true, -999999, 999999)
+	gridTree := gamemap.NewNode(nil, gamemap.IsFreeEdge)
+	score := ai.MiniMax(*gmap, 7, true, -999999, 999999, gridTree)
+	// fmt.Println(gridTree)
 	//assert the evaluation
 	assert.Equal(t, 40, score)
 }
@@ -66,7 +68,7 @@ func TestSelectMove(t *testing.T) {
 		turn   string
 		result []int8
 	}{
- 		
+
 		{
 			tmap: `2-1
 0-0
@@ -78,7 +80,7 @@ func TestSelectMove(t *testing.T) {
 			depth:  4,
 			turn:   "B",
 			result: []int8{0, 1},
-		},  {
+		}, {
 			tmap: `2-1
 0-0
 @A@-@
@@ -89,7 +91,7 @@ func TestSelectMove(t *testing.T) {
 			turn:   "A",
 			depth:  7,
 			result: []int8{3, 0},
-		}, 
+		},
 		{
 			tmap: `2-1
 0-0
@@ -158,7 +160,7 @@ A#A#-
 			gmap := gamemap.NewMapSquare(2)
 			gmap.Update(test.tmap)
 			fmt.Println(gmap)
-			move := ai.SelectMove(*gmap, test.depth, test.turn)
+			move, _ := ai.SelectMove(*gmap, test.depth, test.turn)
 			//assert the evaluation
 			// fmt.Println(move)
 			assert.Equal(t, test.result, move)
@@ -183,7 +185,7 @@ B#-#-#-#-
 	gmap := gamemap.NewMapSquare(4)
 	gmap.Update(testmap)
 	fmt.Println(gmap)
-	move := ai.SelectMove(*gmap, 3, "A")
+	move, _ := ai.SelectMove(*gmap, 3, "A")
 	//assert the evaluation
 	fmt.Println(move)
 	assert.Equal(t, []int8{2, 1}, move)
@@ -205,7 +207,7 @@ A#-#A#B#A
 	gmap := gamemap.NewMapSquare(4)
 	gmap.Update(testmap)
 	fmt.Println(gmap)
-	move := ai.SelectMove(*gmap, 3, "A")
+	move, _ := ai.SelectMove(*gmap, 3, "A")
 	//assert the evaluation
 	fmt.Println(move)
 	assert.Equal(t, []int8{2, 1}, move)
