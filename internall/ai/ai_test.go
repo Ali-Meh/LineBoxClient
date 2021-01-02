@@ -23,7 +23,7 @@ func TestEvaluateMaximizer(t *testing.T) {
 	gmap.Update(testmap)
 	score := ai.Evaluate(*gmap, true, "A")
 	//assert the evaluation
-	assert.Equal(t, 20, score)
+	assert.Equal(t, 40, score)
 }
 func TestEvaluateMinimizer(t *testing.T) {
 	testmap := `2-1
@@ -39,7 +39,7 @@ func TestEvaluateMinimizer(t *testing.T) {
 	gmap.Update(testmap)
 	score := ai.Evaluate(*gmap, false, "B")
 	//assert the evaluation
-	assert.Equal(t, -20, score)
+	assert.Equal(t, -40, score)
 }
 func TestMinimax(t *testing.T) {
 	testmap := `2-1
@@ -75,10 +75,10 @@ func TestSelectMove(t *testing.T) {
 @B@-@
 -#A#-
 @-@B@`,
-			depth:  3,
+			depth:  4,
 			turn:   "B",
-			result: []int8{4, 1},
-		},/*  {
+			result: []int8{0, 1},
+		},  {
 			tmap: `2-1
 0-0
 @A@-@
@@ -149,7 +149,7 @@ A#A#-
 			turn:   "A",
 			depth:  4,
 			result: []int8{0, 3},
-		}, */
+		},
 	}
 
 	for i, test := range testmap {
@@ -178,6 +178,28 @@ B#-#-#-#-
 @-@-@-@-@
 -#-#-#-#-
 @-@-@-@B@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(4)
+	gmap.Update(testmap)
+	fmt.Println(gmap)
+	move := ai.SelectMove(*gmap, 3, "A")
+	//assert the evaluation
+	fmt.Println(move)
+	assert.Equal(t, []int8{2, 1}, move)
+}
+func TestSelect3(t *testing.T) {
+	testmap := `2-1
+2-4
+@B@B@B@B@
+B#-#A#A#B
+@-@-@A@A@
+B#B#B#A#B
+@-@-@B@A@
+B#B#A#A#B
+@-@-@A@A@
+A#-#A#B#A
+@A@B@A@A@`
 
 	//create map
 	gmap := gamemap.NewMapSquare(4)
