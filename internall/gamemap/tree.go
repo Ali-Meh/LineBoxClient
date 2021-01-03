@@ -5,6 +5,7 @@ import "fmt"
 //Tree Keeps track of game map evaluation
 type Tree struct {
 	move     []int8
+	grid     *Map
 	state    EdgeState
 	children []*Tree
 	parent   *Tree
@@ -37,10 +38,11 @@ func (t *Tree) UpdateScore(score int) {
 }
 
 //NewNode will create new node for the tree
-func NewNode(move []int8, state EdgeState) *Tree {
+func NewNode(move []int8, state EdgeState, grid *Map) *Tree {
 	tree := new(Tree)
 	tree.move = move
 	tree.state = state
+	tree.grid = grid
 	tree.parent = nil
 	return tree
 }

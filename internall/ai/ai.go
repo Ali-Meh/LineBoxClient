@@ -95,7 +95,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int, 
 								// clonedMap.Cells[i][j].OwnedBy = gamemap.IsAEdge
 								turn = !turn
 							}
-							newtree := gamemap.NewNode([]int8{edge.X, edge.Y}, edge.State)
+							newtree := gamemap.NewNode([]int8{edge.X, edge.Y}, edge.State, &clonedMap)
 							score := MiniMax(clonedMap, depth-1, turn, alpha, beta, newtree)
 							parentTreeNode.AddChild(newtree, score)
 							turn = !maximizingTurn
@@ -134,7 +134,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int, 
 								// clonedMap.Cells[i][j].OwnedBy = gamemap.IsBEdge
 								turn = !turn
 							}
-							newtree := gamemap.NewNode([]int8{edge.X, edge.Y}, edge.State)
+							newtree := gamemap.NewNode([]int8{edge.X, edge.Y}, edge.State, &clonedMap)
 							score := MiniMax(clonedMap, depth-1, turn, alpha, beta, newtree)
 							parentTreeNode.AddChild(newtree, score)
 							turn = !maximizingTurn
@@ -170,7 +170,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) ([]int8, *gamemap
 		minimizerSambol = "A"
 	}
 
-	gridTree := gamemap.NewNode(nil, gamemap.IsFreeEdge)
+	gridTree := gamemap.NewNode(nil, gamemap.IsFreeEdge, &gmap)
 
 	bestVal := -99999999
 	turn := false
@@ -189,7 +189,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) ([]int8, *gamemap
 							turn = !turn
 						}
 
-						newtree := gamemap.NewNode([]int8{edge.X, edge.Y}, edge.State)
+						newtree := gamemap.NewNode([]int8{edge.X, edge.Y}, edge.State, &clonedmap)
 						score := MiniMax(clonedmap, depth, turn, -999999, 999999, newtree)
 						gridTree.AddChild(newtree, score)
 						// fmt.Println("<==================> depth:", depth, "MAX 🔼 Chose:", edge.Coordinates, "Score:", score)

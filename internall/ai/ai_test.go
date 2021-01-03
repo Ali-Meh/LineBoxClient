@@ -54,7 +54,7 @@ func TestMinimax(t *testing.T) {
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
 	fmt.Println(gmap)
-	gridTree := gamemap.NewNode(nil, gamemap.IsFreeEdge)
+	gridTree := gamemap.NewNode(nil, gamemap.IsFreeEdge,gmap)
 	score := ai.MiniMax(*gmap, 7, true, -999999, 999999, gridTree)
 	// fmt.Println(gridTree)
 	//assert the evaluation
