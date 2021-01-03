@@ -1,5 +1,6 @@
 package gamemap
 
+/*
 import "fmt"
 
 //Tree Keeps track of game map evaluation
@@ -79,3 +80,4 @@ func (t *Tree) String() string {
 	// res += "\n"
 	return res
 }
+*/

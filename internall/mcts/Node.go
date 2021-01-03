@@ -22,11 +22,11 @@ func (n *Node) UCB1(UCTK float64) float64 {
 	return n.value/(n.visits+math.SmallestNonzeroFloat64) + UCTK*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
 }
 
-//RollOut calculates end state of the game randomly
-func (n *Node) RollOut() int {
+// //RollOut calculates end state of the game randomly
+// func (n *Node) RollOut() int {
 
-	return 0
-}
+// 	return 0
+// }
 
 //Expand will expand node with appropriate children
 func (n *Node) Expand() {
@@ -37,8 +37,16 @@ func (n *Node) Expand() {
 					if edge.State == gamemap.IsFreeEdge && !n.hasChild([]int8{edge.X, edge.Y}) {
 						clonedMap := n.gmap.Clone()
 						turn := !n.turn
-						//check if the board is filled then dont change turn
-						if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSambol)) {
+
+						var edgestate string
+						if turn {
+							edgestate = maximizerSambol
+						} else {
+							edgestate = minimizerSambol
+						}
+
+						//check if the board is filled then dont change turn//TODO test turn
+						if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(edgestate)) {
 							turn = !turn
 						}
 						//generate node &&add to the children of existing node

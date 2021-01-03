@@ -15,7 +15,6 @@ type GameState struct {
 	cachedResults   [3]float64
 }
 
-
 type MCTS struct {
 	game       *GameState
 	iterations int
@@ -24,8 +23,7 @@ type MCTS struct {
 }
 
 //SelectMove next move based on base state of the game
-func SelectMove(gmap gamemap.Map, depth int, maximizer string) ([]int8, *gamemap.Tree) {
+// func SelectMove(gmap gamemap.Map, depth int, maximizer string) ([]int8, *gamemap.Tree) {
 
-	return nil, nil
-}
-
+// 	return nil, nil
+// }
