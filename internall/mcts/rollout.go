@@ -8,14 +8,14 @@ import (
 )
 
 //RollOut calculates end state of the game randomly
-func (n *Node) RollOut(count int) int {
-	resChan := make(chan int)
+func (n *Node) RollOut(count int) float64 {
+	resChan := make(chan float64)
 	defer close(resChan)
 
 	for i := 0; i < count; i++ {
 		go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
 	}
-	value := 0
+	value := 0.0
 	for i := 0; i < count; i++ {
 		t := <-resChan
 		if value < t || i==0 {
@@ -46,7 +46,7 @@ func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
 }
 
 //evaluate
-func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves [][]int8, resChan chan int) {
+func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves [][]int8, resChan chan float64) {
 	/*select moves randomly*/
 	//shuffle the moves
 	rand.Seed(time.Now().UnixNano())
@@ -70,8 +70,8 @@ func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves [][]int8, resCh
 }
 
 //Evaluate will evaluate the score of the current terminal
-func evaluate(gmap gamemap.Map) int {
-	score := 0
+func evaluate(gmap gamemap.Map) float64 {
+	score := 0.0
 	for _, raw := range gmap.Cells {
 		for _, cell := range raw {
 			switch cell.FilledEdgeCount {

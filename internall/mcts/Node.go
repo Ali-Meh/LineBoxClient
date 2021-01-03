@@ -18,8 +18,11 @@ type Node struct {
 }
 
 //UCB1 Calculates
-func (n *Node) UCB1(UCTK float64) float64 {
-	return n.value/(n.visits+math.SmallestNonzeroFloat64) + UCTK*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
+func (n Node) UCB1() float64 {
+	if n.visits == 0 {
+		return math.MaxFloat64
+	}
+	return n.value/(n.visits) + UCTK*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits))
 }
 
 // //RollOut calculates end state of the game randomly
@@ -46,11 +49,11 @@ func (n *Node) Expand() {
 						}
 
 						//check if the board is filled then dont change turn//TODO test turn
-						if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(edgestate)) {
+						if !clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(edgestate)) {
 							turn = !turn
 						}
 						//generate node &&add to the children of existing node
-						n.childNodes = append(n.childNodes, NewNode([]int8{edge.X, edge.Y}, turn, &clonedMap))
+						n.childNodes = append(n.childNodes, n.NewChild([]int8{edge.X, edge.Y}, turn, &clonedMap))
 					}
 				}
 			}
@@ -63,11 +66,16 @@ func NewNode(move []int8, turn bool, gmap *gamemap.Map) *Node {
 	return &Node{move: move, value: 0, visits: 0, turn: turn, gmap: gmap}
 }
 
+//NewChild will Create a new child node for existing node
+func (n *Node) NewChild(move []int8, turn bool, gmap *gamemap.Map) *Node {
+	return &Node{move: move, value: 0, visits: 0, turn: turn, gmap: gmap, parentNode: n}
+}
+
 /***********Private Methods**********/
 
 func (n *Node) hasChild(move []int8) bool {
 	for _, c := range n.childNodes {
-		if len(move) == len(c.move) && n.move[0] == c.move[0] && n.move[1] == c.move[1] {
+		if len(move) == len(c.move) && move[0] == c.move[0] && move[1] == c.move[1] {
 			return true
 		}
 	}

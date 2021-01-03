@@ -4,10 +4,11 @@ import (
 	"testing"
 
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
+	"github.com/ali-meh/LineBoxClient/internall/mcts"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestEvaluateMaximizer(t *testing.T) {
+func TestSelectMove(t *testing.T) {
 	testmap := `2-1
 0-0
 @A@A@
@@ -20,6 +21,7 @@ func TestEvaluateMaximizer(t *testing.T) {
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
 
-	
-	assert.Equal(t, 40, 40)
+	res := mcts.SelectMove(*gmap)
+
+	assert.Equal(t, []int8{0, 1}, res)
 }
