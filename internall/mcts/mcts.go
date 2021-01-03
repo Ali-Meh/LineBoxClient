@@ -2,6 +2,7 @@ package mcts
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
@@ -10,7 +11,7 @@ var (
 	//maximizerSambol indecates the maximizer player symbol
 	maximizerSambol string  = "A"
 	minimizerSambol string  = "B"
-	UCTK            float64 = 2
+	uctk            float64 = 1 / math.Sqrt(2)
 )
 
 //GameState will keep track of state of game every point
@@ -28,19 +29,28 @@ var (
 // }
 
 //SelectMove next move based on base state of the game
-func SelectMove(gmap gamemap.Map) []int8 {
+func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	rootNode := NewNode(nil, true, &gmap)
+	maximizerSambol = maximizer
+	if maximizerSambol == "A" {
+		minimizerSambol = "B"
+	} else {
+		minimizerSambol = "A"
+	}
 	//for i try
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 20000; i++ {
 		mcts(rootNode)
+		t++
 	}
 	fmt.Println(gmap)
 
 	//find best option
-	move := []int8{0, 0}
-	bestValue := 0.0
-	for _, v := range rootNode.childNodes {
+	move := rootNode.childNodes[0].move
+	bestValue := rootNode.childNodes[0].value
+	fmt.Printf("coords: %v , visits:%f , value :%f \n", rootNode.childNodes[0].move, rootNode.childNodes[0].visits, rootNode.childNodes[0].value)
+
+	for _, v := range rootNode.childNodes[1:] {
 		if bestValue < v.value {
 			bestValue = v.value
 			move = v.move
@@ -58,7 +68,7 @@ func mcts(node *Node) float64 {
 		 */
 		if node.visits == 0 {
 			//rollout
-			node.value = node.RollOut(3)
+			node.value = node.RollOut(5)
 			node.visits = 1
 			return node.value
 		}
@@ -82,9 +92,11 @@ func mcts(node *Node) float64 {
 				chossenNode = n
 			}
 		}
-		chossenNode.value += mcts(chossenNode)
-		chossenNode.visits++
-		return chossenNode.value
+		node.value += mcts(chossenNode)
+		node.visits++
+		return node.value
 	}
+	node.value += node.RollOut(5)
+	node.visits++
 	return node.value
 }

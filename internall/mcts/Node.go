@@ -19,10 +19,12 @@ type Node struct {
 
 //UCB1 Calculates
 func (n Node) UCB1() float64 {
+	// return n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(2.*math.Log(t)/(n.visits+math.SmallestNonzeroFloat64))
+	return n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(2*math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
 	if n.visits == 0 {
 		return math.MaxFloat64
 	}
-	return n.value/(n.visits) + UCTK*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits))
+	return n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
 }
 
 // //RollOut calculates end state of the game randomly

@@ -15,10 +15,10 @@ func (n *Node) RollOut(count int) float64 {
 	for i := 0; i < count; i++ {
 		go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
 	}
-	value := 0.0
-	for i := 0; i < count; i++ {
+	value := <-resChan
+	for i := 0; i < count-1; i++ {
 		t := <-resChan
-		if value < t || i==0 {
+		if value < t || i == 0 {
 			value = t
 		}
 	}
@@ -84,5 +84,10 @@ func evaluate(gmap gamemap.Map) float64 {
 			}
 		}
 	}
+	// if score > 0 {
+	// 	return 1
+	// }
+	// 	return 0
+
 	return score
 }
