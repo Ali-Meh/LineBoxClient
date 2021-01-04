@@ -9,7 +9,7 @@ import (
 )
 
 func TestSelectMove(t *testing.T) {
-	testmap := `1-2
+	testmap := `2-1
 0-0
 @A@A@
 -#B#-
@@ -21,11 +21,11 @@ func TestSelectMove(t *testing.T) {
 	gmap := gamemap.NewMapSquare(2)
 	gmap.Update(testmap)
 
-	minimizerSambol := "A"
+	maximizer := "A"
 	if testmap[0] == '2' {
-		minimizerSambol = "B"
+		maximizer = "B"
 	}
-	move := mcts.SelectMove(*gmap, minimizerSambol)
+	move := mcts.SelectMove(*gmap, maximizer)
 
 	assert.Equal(t, []int8{0, 1}, move)
 }

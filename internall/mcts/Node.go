@@ -20,21 +20,20 @@ type Node struct {
 //UCB1 Calculates
 func (n Node) UCB1() float64 {
 	// return n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(2.*math.Log(t)/(n.visits+math.SmallestNonzeroFloat64))
-	return n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(2*math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
+	playerValue := 1.0
+	// if n.turn {
+	// 	playerValue = -1.0
+	// }
+	return playerValue*n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(2*math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
+
 	if n.visits == 0 {
 		return math.MaxFloat64
 	}
 	return n.value/(n.visits+math.SmallestNonzeroFloat64) + uctk*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits+math.SmallestNonzeroFloat64))
 }
 
-// //RollOut calculates end state of the game randomly
-// func (n *Node) RollOut() int {
-
-// 	return 0
-// }
-
 //Expand will expand node with appropriate children
-func (n *Node) Expand() {
+func (n *Node) Expand() *Node {
 	for i := range n.gmap.Cells {
 		for _, cell := range n.gmap.Cells[i] {
 			if cell.FilledEdgeCount < 4 {
@@ -61,6 +60,7 @@ func (n *Node) Expand() {
 			}
 		}
 	}
+	return n.childNodes[0]
 }
 
 //NewNode next move based on base state of the game
@@ -82,4 +82,18 @@ func (n *Node) hasChild(move []int8) bool {
 		}
 	}
 	return false
+}
+
+func (n *Node) getBestChild() *Node {
+	chossenNode := n.childNodes[0]
+	chossenUcb := chossenNode.UCB1()
+	//go to leafnode
+	for _, n := range n.childNodes[1:] {
+		v := n.UCB1()
+		if v > chossenUcb {
+			chossenUcb = v
+			chossenNode = n
+		}
+	}
+	return chossenNode
 }

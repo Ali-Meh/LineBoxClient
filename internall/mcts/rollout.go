@@ -9,20 +9,23 @@ import (
 
 //RollOut calculates end state of the game randomly
 func (n *Node) RollOut(count int) float64 {
-	resChan := make(chan float64)
-	defer close(resChan)
 
-	for i := 0; i < count; i++ {
-		go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
-	}
-	value := <-resChan
-	for i := 0; i < count-1; i++ {
-		t := <-resChan
-		if value < t || i == 0 {
-			value = t
-		}
-	}
-	return value
+	return n.eval()
+
+	// resChan := make(chan float64)
+	// defer close(resChan)
+
+	// for i := 0; i < count; i++ {
+	// 	go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
+	// }
+	// value := <-resChan
+	// for i := 0; i < count-1; i++ {
+	// 	t := <-resChan
+	// 	if value < t || i == 0 {
+	// 		value = t
+	// 	}
+	// }
+	// return value
 }
 
 func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
@@ -75,6 +78,35 @@ func evaluate(gmap gamemap.Map) float64 {
 	for _, raw := range gmap.Cells {
 		for _, cell := range raw {
 			switch cell.FilledEdgeCount {
+			case 4:
+				if maximizerSambol == string(cell.OwnedBy) {
+					score++
+				} else {
+					score--
+				}
+			}
+		}
+	}
+	// if score > 0 {
+	// 	return 1
+	// }
+	// 	return 0
+
+	return score
+}
+
+//Evaluate will evaluate the score of the current terminal
+func (n *Node) eval() float64 {
+	score := 0.0
+	for _, raw := range n.gmap.Cells {
+		for _, cell := range raw {
+			switch cell.FilledEdgeCount {
+			case 3:
+				if !n.turn  {
+					score++
+				} else {
+					score--
+				}
 			case 4:
 				if maximizerSambol == string(cell.OwnedBy) {
 					score++

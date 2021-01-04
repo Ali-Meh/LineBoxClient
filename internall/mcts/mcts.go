@@ -14,23 +14,9 @@ var (
 	uctk            float64 = 1 / math.Sqrt(2)
 )
 
-//GameState will keep track of state of game every point
-// type GameState struct {
-// 	playerJustMoved int
-// 	board           *gamemap.Map
-// 	cachedResults   [3]float64
-// }
-
-// type MCTS struct {
-// 	game       *GameState
-// 	iterations int
-// 	movesNode  *Node
-// 	UCTK       float64
-// }
-
 //SelectMove next move based on base state of the game
 func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
-	rootNode := NewNode(nil, true, &gmap)
+	rootNode := NewNode(nil, false, &gmap)
 	maximizerSambol = maximizer
 	if maximizerSambol == "A" {
 		minimizerSambol = "B"
@@ -39,29 +25,44 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	}
 	//for i try
 
-	for i := 0; i < 20000; i++ {
+	for i := 0; i < 1000; i++ {
 		mcts(rootNode)
-		t++
 	}
 	fmt.Println(gmap)
 
 	//find best option
-	move := rootNode.childNodes[0].move
-	bestValue := rootNode.childNodes[0].value
-	fmt.Printf("coords: %v , visits:%f , value :%f \n", rootNode.childNodes[0].move, rootNode.childNodes[0].visits, rootNode.childNodes[0].value)
-
-	for _, v := range rootNode.childNodes[1:] {
-		if bestValue < v.value {
-			bestValue = v.value
-			move = v.move
-		}
-		fmt.Printf("coords: %v , visits:%f , value :%f \n", v.move, v.visits, v.value)
+	for _, v := range rootNode.childNodes {
+		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(),v.value/v.visits)
 	}
 
-	return move
+	return rootNode.getBestChild().move
 }
 
-func mcts(node *Node) float64 {
+func mcts(node *Node) {
+	node = selectNode(node)
+	value := node.RollOut(3)
+
+	node.visits++
+	node.value += value
+	for node.parentNode != nil {
+		node = node.parentNode
+		node.visits++
+		node.value += value
+	}
+}
+
+func selectNode(node *Node) *Node {
+	for len(extractRemainingMoves(node.gmap)) > 0 {
+		if node.childNodes != nil {
+			node = node.getBestChild()
+		} else {
+			return node.Expand()
+		}
+	}
+	return node
+}
+
+func mctsRecursive(node *Node) float64 {
 	if node.childNodes == nil {
 		/*********
 		*	RollOut node
@@ -87,12 +88,13 @@ func mcts(node *Node) float64 {
 		chossenUcb := chossenNode.UCB1()
 		//go to leafnode
 		for _, n := range node.childNodes[1:] {
-			if n.UCB1() > chossenUcb {
-				chossenUcb = n.UCB1()
+			v := n.UCB1()
+			if v > chossenUcb {
+				chossenUcb = v
 				chossenNode = n
 			}
 		}
-		node.value += mcts(chossenNode)
+		node.value += mctsRecursive(chossenNode)
 		node.visits++
 		return node.value
 	}

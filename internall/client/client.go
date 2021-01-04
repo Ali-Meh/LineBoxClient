@@ -57,11 +57,11 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 		// fmt.Println("Depth set to ", depth)
 		// move, _ := ai.SelectMove(*gmap, int(depth), string(message[0:2]))
 
-		minimizerSambol := "A"
+		maximizer := "A"
 		if message[0] == '2' {
-			minimizerSambol = "B"
+			maximizer = "B"
 		}
-		move := mcts.SelectMove(*gmap, minimizerSambol)
+		move := mcts.SelectMove(*gmap, maximizer)
 		fmt.Printf("Sending %v to server", move)
 		c.SendCord(move[0], move[1])
 		/*
