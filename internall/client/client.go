@@ -51,18 +51,18 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 
 		fmt.Printf("server ->: %s\n", message)
 		gmap := gamemap.NewMapSquare(4)
-		gmap.Update(string(message))
+		maximizer := "A"
+		if message[0] == '2' {
+			maximizer = "B"
+		}
+		gmap.Update(string(message), maximizer)
 		// depth := 1.0
 		// depth := (float64(len(gmap.AIndexes)+len(gmap.BIndexes))/float64(len(gmap.Cells)*len(gmap.Cells[0])*4))*3 + 3
 		// fmt.Println("Depth set to ", depth)
 		// move, _ := ai.SelectMove(*gmap, int(depth), string(message[0:2]))
 
-		maximizer := "A"
-		if message[0] == '2' {
-			maximizer = "B"
-		}
 		move := mcts.SelectMove(*gmap, maximizer)
-		fmt.Printf("Sending %v to server", move)
+		fmt.Printf("Sending %v to server\n", move)
 		c.SendCord(move[0], move[1])
 		/*
 			c.SendCord(6, 3)

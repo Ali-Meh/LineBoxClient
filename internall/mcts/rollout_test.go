@@ -19,7 +19,11 @@ A#A#-
 
 	//create map
 	gmap := gamemap.NewMapSquare(2)
-	gmap.Update(testmap)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
 
 	rootNode := mcts.NewNode([]int8{}, true, gmap)
 	rootNode.RollOut(3)

@@ -41,7 +41,7 @@ func (gameMap Map) String() string {
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + /* strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) */ string(gameMap.Cells[i][j].OwnedBy) + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
+			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) /* string(gameMap.Cells[i][j].OwnedBy) */ + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
@@ -105,7 +105,16 @@ func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) bool {
 }
 
 //Update updates the game map according to the raw text it gets
-func (gameMap Map) Update(rawMap string) {
+func (gameMap Map) Update(rawMap, maximizerSambol string) {
+	minimizerSambol := "B"
+	if maximizerSambol == "B" {
+		minimizerSambol = "A"
+	}
+	scoreSection := rawMap[strings.Index(rawMap, "\n"):strings.Index(rawMap, "@")]
+	scores := strings.Split(scoreSection[1:len(scoreSection)-1], "-")
+	minimizerScore, _ := strconv.Atoi(scores[1])
+	maximizerScore, _ := strconv.Atoi(scores[0])
+
 	rawMap = rawMap[strings.Index(rawMap, "@"):]
 	rawMap = strings.ReplaceAll(rawMap, "\n", "")
 	Aindexes := findIndex(rawMap, 'A')
@@ -121,6 +130,22 @@ func (gameMap Map) Update(rawMap string) {
 	for _, ind := range Bindexes {
 		gameMap.SetEdgeState(ind%Xlength, ind/Ylength, IsBEdge)
 	}
+
+	for _, raw := range gameMap.Cells {
+		for _, cell := range raw {
+			switch cell.FilledEdgeCount {
+			case 4:
+				if maximizerScore > 0 {
+					cell.OwnedBy = EdgeState(maximizerSambol)
+					maximizerScore--
+				} else if minimizerScore > 0 {
+					cell.OwnedBy = EdgeState(minimizerSambol)
+					minimizerScore--
+				}
+			}
+		}
+	}
+
 	gameMap.AIndexes = appendIndexes(Aindexes, gameMap.AIndexes)
 	gameMap.BIndexes = appendIndexes(Bindexes, gameMap.BIndexes)
 	// gameMap.bIndexes = append(*gameMap.bIndexes, Bindexes...)

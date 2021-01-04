@@ -10,22 +10,22 @@ import (
 //RollOut calculates end state of the game randomly
 func (n *Node) RollOut(count int) float64 {
 
-	return n.eval()
+	// return n.eval()
 
-	// resChan := make(chan float64)
-	// defer close(resChan)
+	resChan := make(chan float64)
+	defer close(resChan)
 
-	// for i := 0; i < count; i++ {
-	// 	go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
-	// }
-	// value := <-resChan
-	// for i := 0; i < count-1; i++ {
-	// 	t := <-resChan
-	// 	if value < t || i == 0 {
-	// 		value = t
-	// 	}
-	// }
-	// return value
+	for i := 0; i < count; i++ {
+		go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
+	}
+	value := <-resChan
+	for i := 0; i < count-1; i++ {
+		t := <-resChan
+		if value < t || i == 0 {
+			value = t
+		}
+	}
+	return value
 }
 
 func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
@@ -102,7 +102,7 @@ func (n *Node) eval() float64 {
 		for _, cell := range raw {
 			switch cell.FilledEdgeCount {
 			case 3:
-				if !n.turn  {
+				if n.turn  {
 					score++
 				} else {
 					score--

@@ -11,7 +11,7 @@ var (
 	//maximizerSambol indecates the maximizer player symbol
 	maximizerSambol string  = "A"
 	minimizerSambol string  = "B"
-	uctk            float64 = 1 / math.Sqrt(2)
+	uctk            float64 = math.Sqrt2
 )
 
 //SelectMove next move based on base state of the game
@@ -25,14 +25,14 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	}
 	//for i try
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 10000; i++ {
 		mcts(rootNode)
 	}
 	fmt.Println(gmap)
 
 	//find best option
 	for _, v := range rootNode.childNodes {
-		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(),v.value/v.visits)
+		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(), v.value/v.visits)
 	}
 
 	return rootNode.getBestChild().move
@@ -43,7 +43,7 @@ func mcts(node *Node) {
 	value := node.RollOut(3)
 
 	node.visits++
-	node.value += value
+	node.value = value
 	for node.parentNode != nil {
 		node = node.parentNode
 		node.visits++
@@ -60,6 +60,30 @@ func selectNode(node *Node) *Node {
 		}
 	}
 	return node
+}
+
+//SelectMoveRecursive next move based on base state of the game
+func SelectMoveRecursive(gmap gamemap.Map, maximizer string) []int8 {
+	rootNode := NewNode(nil, false, &gmap)
+	maximizerSambol = maximizer
+	if maximizerSambol == "A" {
+		minimizerSambol = "B"
+	} else {
+		minimizerSambol = "A"
+	}
+	//for i try
+	fmt.Println(gmap)
+
+	for i := 0; i < 10000; i++ {
+		mctsRecursive(rootNode)
+	}
+
+	//find best option
+	for _, v := range rootNode.childNodes {
+		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(), v.value/v.visits)
+	}
+
+	return rootNode.getBestChild().move
 }
 
 func mctsRecursive(node *Node) float64 {
@@ -87,7 +111,7 @@ func mctsRecursive(node *Node) float64 {
 		chossenNode := node.childNodes[0]
 		chossenUcb := chossenNode.UCB1()
 		//go to leafnode
-		for _, n := range node.childNodes[1:] {
+		for _, n := range node.childNodes {
 			v := n.UCB1()
 			if v > chossenUcb {
 				chossenUcb = v
