@@ -37,7 +37,7 @@ func (n *Node) RollOut(count int) float64 {
 	return maxRes + n.eval()*float64(n.depth*2)
 }
 
-func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
+func extractRemainingMoves(gmap *gamemap.Map) []Action {
 	availableMovesMap := map[int]gamemap.Coordinates{}
 	for _, raw := range gmap.Cells {
 		for _, cell := range raw {
@@ -49,7 +49,7 @@ func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
 		}
 	}
 
-	availableMoves := [][]int8{}
+	availableMoves := []Action{}
 	for _, v := range availableMovesMap {
 		availableMoves = append(availableMoves, []int8{v.X, v.Y})
 	}
@@ -58,7 +58,7 @@ func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
 }
 
 //evaluate
-func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves [][]int8, resChan chan float64) {
+func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves []Action, resChan chan float64) {
 	/*select moves randomly*/
 	//shuffle the moves
 	rand.Seed(time.Now().Local().UnixNano())

@@ -1,10 +1,11 @@
-package mcts
+package mcts_test
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
+	"github.com/ali-meh/LineBoxClient/internall/mcts"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -76,63 +77,10 @@ A#A#A
 			}
 			gmap.Update(test.tmap, minimizerSambol)
 
-			rootNode := NewNode([]int8{}, true, gmap)
+			rootNode := mcts.NewNode([]int8{}, true, gmap)
 
 			res := rootNode.RollOut(6)
 			assert.Contains(t, test.result, res)
-		})
-	}
-}
-
-func TestRolloutIntractive(t *testing.T) {
-	/**********************************************************/
-	testmap := []struct {
-		move   []int8
-		result []float64
-	}{
-		{
-			move:   []int8{0, 1},
-			result: []float64{-4},
-		},
-	}
-
-	/**********************************************************/
-
-	tmap := `2-1
-0-0
-@A@B@
--#-#B
-@A@-@
-A#-#B
-@-@A@`
-	gmap := gamemap.NewMapSquare(2)
-	maximizerSambol = "A"
-	minimizerSambol = "B"
-	if tmap[0] == '2' {
-		minimizerSambol = "A"
-		maximizerSambol = "B"
-	}
-	gmap.Update(tmap, maximizerSambol)
-	rootNode := NewNode([]int8{}, false, gmap)
-	turn := true
-	/**********************************************************/
-	for i, test := range testmap {
-		t.Run("test map select #"+fmt.Sprintf("%d", i), func(t *testing.T) {
-			for i := 0; i < 5; i++ {
-				//create map
-				turn := !turn
-				var edgestate string
-				if turn {
-					edgestate = maximizerSambol
-				} else {
-					edgestate = minimizerSambol
-				}
-				if rootNode.gmap.SetEdgeState(int(test.move[0]), int(test.move[1]), gamemap.EdgeState(edgestate)) {
-					turn = !turn
-				}
-				res := rootNode.RollOut(5)
-				assert.Contains(t, test.result, res)
-			}
 		})
 	}
 }

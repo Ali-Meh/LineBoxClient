@@ -28,14 +28,13 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 		mcts(rootNode)
 	}
 
-
 	fmt.Println(gmap)
 	//find best option
-	for _, v := range rootNode.childNodes {
-		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(), v.value/v.visits)
+	for _, v := range rootNode.children {
+		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(1.4), v.value/v.visits)
 	}
 
-	return rootNode.getBestChild().move
+	return rootNode.getBestChild().causingAction
 }
 
 func mcts(node *Node) {
@@ -57,34 +56,34 @@ func mcts(node *Node) {
 
 func selectNode(node *Node) *Node {
 
-	for !node.IsTerminal() {
-		if !node.IsFullyExpanded() {
-			return node.Expand()
-		}
-		node = node.uctBestChild(1.4)
-	}
-	return node
+	// for !node.IsTerminal() {
+	// 	if !node.IsFullyExpanded() {
+	// 		return node.Expand()
+	// 	}
+	// 	node = node.getBestChild()
+	// }
+	// return node
 
-	// for node.childNodes != nil {
+	// for node.children != nil {
 	// 	node = node.getBestChild()
 	// }
 	// if len(extractRemainingMoves(node.gmap)) > 0 && node.visits == 1 || node.depth == 0 {
 	// 	node = node.Expand()
 	// }
 	// for node != nil && (node.depth == 0 || len(extractRemainingMoves(node.gmap)) > 0) {
-	// 	if node.childNodes == nil {
+	// 	if node.children == nil {
 	// 		node= node.Expand()
 	// 	}
 	// 	return  node.getBestChild()
 	// }
 
-	// for len(extractRemainingMoves(node.gmap)) > 0 {
-	// 	if node.childNodes != nil {
-	// node = node.getBestChild()
-	// 	} else {
-	// 		return node.Expand()
-	// 	}
-	// }
+	for len(extractRemainingMoves(node.gmap)) > 0 {
+		if node.children != nil {
+	node = node.getBestChild()
+		} else {
+			return node.Expand()
+		}
+	}
 	return node
 }
 
@@ -105,15 +104,15 @@ func SelectMoveRecursive(gmap gamemap.Map, maximizer string) []int8 {
 	}
 
 	//find best option
-	for _, v := range rootNode.childNodes {
-		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(), v.value/v.visits)
+	for _, v := range rootNode.children {
+		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(1.4), v.value/v.visits)
 	}
 
-	return rootNode.getBestChild().move
+	return rootNode.getBestChild().causingAction
 }
 
 func mctsRecursive(node *Node) float64 {
-	if node.childNodes == nil {
+	if node.children == nil {
 		/*********
 		*	RollOut node
 		 */
@@ -130,15 +129,15 @@ func mctsRecursive(node *Node) float64 {
 		node.Expand()
 	}
 
-	if len(node.childNodes) > 0 {
+	if len(node.children) > 0 {
 		/*********
 		*	Go to Leaf Node
 		 */
-		chossenNode := node.childNodes[0]
-		chossenUcb := chossenNode.UCB1()
+		chossenNode := node.children[0]
+		chossenUcb := chossenNode.UCB1(1.4)
 		//go to leafnode
-		for _, n := range node.childNodes {
-			v := n.UCB1()
+		for _, n := range node.children {
+			v := n.UCB1(1.4)
 			if v > chossenUcb {
 				chossenUcb = v
 				chossenNode = n
