@@ -95,21 +95,16 @@ func (n *Node) hasChild(action []int8) bool {
 	return false
 }
 
-func (n *Node) getBestChild() *Node {
-	chossenNode := n.children[0]
-	chossenUcb := chossenNode.UCB1(uctk)
-	//go to leafnode
-	for _, n := range n.children[1:] {
-		v := n.UCB1(uctk)
-		if v > chossenUcb {
-			chossenUcb = v
-			chossenNode = n
+func (n *Node) getBestChild(uctk float64) *Node {
+	chosenIndex := 0
+	maxValue := -math.MaxFloat64
+	for i, child := range n.children {
+		if child.UCB1(uctk) > maxValue {
+			maxValue = child.UCB1(uctk)
+			chosenIndex = i
 		}
 	}
-	if chossenUcb == math.Inf(-1) {
-		return n.parentNode.getBestChild()
-	}
-	return chossenNode
+	return n.children[chosenIndex]
 }
 
 // IsLeaf returns true if the called-upon node is a leaf node in the tree false
@@ -119,14 +114,14 @@ func (n Node) isLeaf() bool {
 }
 
 func (n *Node) isFullyExpanded() bool {
-	return len(n.remainingActions) == 0
+	return n.children != nil
 }
 
 // IsTerminal conceptually differs from IsLeaf in that a node will be called
 // "terminal" if it's domain state is terminal (end of the game), whereas IsLeaf
 // returns true if it is merely the node's position in the tree that is terminal.
 func (n Node) isTerminal() bool {
-	return len(n.getRemainingMoves()) > 0
+	return len(n.getRemainingMoves()) == 0
 }
 
 // IsRoot returns true if the called-upon node has no parent (and is in fact a

@@ -12,11 +12,6 @@ import (
 //RollOut calculates end state of the game randomly
 func (n *Node) RollOut(count int) float64 {
 
-	// return n.eval()
-	// if n.depth == 1 && n.move[0]==3&&n.move[1]==2 {
-	// 	fmt.Print()
-	// }
-
 	resChan := make(chan float64)
 	defer close(resChan)
 
@@ -34,7 +29,7 @@ func (n *Node) RollOut(count int) float64 {
 			maxRes = value
 		}
 	}
-	return maxRes + n.eval()*float64(n.depth*2)
+	return maxRes + n.Eval()//hestoric outcome + current state seggested score
 }
 
 func extractRemainingMoves(gmap *gamemap.Map) []Action {
@@ -67,9 +62,9 @@ func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves []Action, resCh
 	var edgestate string
 	for _, v := range availableMoves {
 		if turn {
-			edgestate = maximizerSambol
-		} else {
 			edgestate = minimizerSambol
+			} else {
+			edgestate = maximizerSambol
 		}
 		if !gmap.SetEdgeState(int(v[0]), int(v[1]), gamemap.EdgeState(edgestate)) {
 			turn = !turn
@@ -102,14 +97,14 @@ func evaluate(gmap gamemap.Map) float64 {
 	return score
 }
 
-//Evaluate will evaluate the score of the current terminal
-func (n *Node) eval() float64 {
+//Eval will evaluate the score of the current terminal
+func (n *Node) Eval() float64 {
 	score := 0.0
 	for _, raw := range n.gmap.Cells {
 		for _, cell := range raw {
 			switch cell.FilledEdgeCount {
 			case 3:
-				if n.parentNode.turn {
+				if n.turn {
 					score--
 				} else {
 					score++
