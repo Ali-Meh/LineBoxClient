@@ -1,32 +1,138 @@
-package mcts_test
+package mcts
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
-	"github.com/ali-meh/LineBoxClient/internall/mcts"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRollout(t *testing.T) {
-	testmap := `2-1
-0-0
+	testmap := []struct {
+		tmap   string
+		result []float64
+	}{
+
+		{
+			tmap: `2-1
+0-2
 @A@A@
 B#A#-
 @B@-@
 A#A#-
-@B@B@`
-
-	//create map
-	gmap := gamemap.NewMapSquare(2)
-	minimizerSambol := "A"
-	if testmap[0] == '2' {
-		minimizerSambol = "B"
+@B@B@`,
+			result: []float64{0, 4},
+		},
+		{
+			tmap: `2-1
+0-2
+@A@A@
+B#A#A
+@B@-@
+A#A#-
+@B@B@`,
+			result: []float64{0, 4},
+		},
+		{
+			tmap: `2-1
+0-2
+@A@A@
+B#A#A
+@B@-@
+A#A#-
+@B@B@`,
+			result: []float64{0, 4},
+		},
+		{
+			tmap: `2-1
+3-0
+@A@A@
+B#A#A
+@B@B@
+A#A#-
+@B@B@`,
+			result: []float64{-2},
+		},
+		{
+			tmap: `2-1
+4-0
+@A@A@
+B#A#A
+@B@B@
+A#A#A
+@B@B@`,
+			result: []float64{-4},
+		},
 	}
-	gmap.Update(testmap, minimizerSambol)
 
-	rootNode := mcts.NewNode([]int8{}, true, gmap)
-	rootNode.RollOut(3)
+	for i, test := range testmap {
+		t.Run("test map select #"+fmt.Sprintf("%d", i), func(t *testing.T) {
+			//create map
+			gmap := gamemap.NewMapSquare(2)
+			minimizerSambol := "A"
+			if test.tmap[0] == '2' {
+				minimizerSambol = "B"
+			}
+			gmap.Update(test.tmap, minimizerSambol)
 
-	assert.Equal(t, 40, 40)
+			rootNode := NewNode([]int8{}, true, gmap)
+
+			res := rootNode.RollOut(6)
+			assert.Contains(t, test.result, res)
+		})
+	}
+}
+
+func TestRolloutIntractive(t *testing.T) {
+	/**********************************************************/
+	testmap := []struct {
+		move   []int8
+		result []float64
+	}{
+		{
+			move:   []int8{0, 1},
+			result: []float64{-4},
+		},
+	}
+
+	/**********************************************************/
+
+	tmap := `2-1
+0-0
+@A@B@
+-#-#B
+@A@-@
+A#-#B
+@-@A@`
+	gmap := gamemap.NewMapSquare(2)
+	maximizerSambol = "A"
+	minimizerSambol = "B"
+	if tmap[0] == '2' {
+		minimizerSambol = "A"
+		maximizerSambol = "B"
+	}
+	gmap.Update(tmap, maximizerSambol)
+	rootNode := NewNode([]int8{}, false, gmap)
+	turn := true
+	/**********************************************************/
+	for i, test := range testmap {
+		t.Run("test map select #"+fmt.Sprintf("%d", i), func(t *testing.T) {
+			for i := 0; i < 5; i++ {
+				//create map
+				turn := !turn
+				var edgestate string
+				if turn {
+					edgestate = maximizerSambol
+				} else {
+					edgestate = minimizerSambol
+				}
+				if rootNode.gmap.SetEdgeState(int(test.move[0]), int(test.move[1]), gamemap.EdgeState(edgestate)) {
+					turn = !turn
+				}
+				res := rootNode.RollOut(5)
+				assert.Contains(t, test.result, res)
+			}
+		})
+	}
 }

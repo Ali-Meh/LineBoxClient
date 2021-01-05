@@ -21,7 +21,11 @@ func TestCreateMap(t *testing.T) {
 @-@-@-@B@`
 
 	gmap := gamemap.NewMapSquare(4)
-	gmap.Update(testmap)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
 
 	// fmt.Println(gmap)
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[0][1].UpperEdge.State)
@@ -56,13 +60,18 @@ func TestUpdateMap(t *testing.T) {
 @-@-@B@-@`}
 
 	gmap := gamemap.NewMapSquare(4)
-	gmap.Update(testmap[0])
+	minimizerSambol := "A"
+	if testmap[0][0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap[0], minimizerSambol)
 	// fmt.Println(gmap)
 
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[0][1].UpperEdge.State)
 	assert.Equal(t, gamemap.IsBEdge, gmap.Cells[3][3].LowerEdge.State)
 
-	gmap.Update(testmap[1])
+	gmap.Update(testmap[1], minimizerSambol)
+
 	// fmt.Println(gmap)
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[1][1].RightEdge.State)
 	assert.Equal(t, gamemap.IsAEdge, gmap.Cells[1][2].LeftEdge.State)
@@ -98,9 +107,14 @@ func BenchmarkUpdateMap(b *testing.B) {
 @-@-@B@-@`}
 
 	gmap := gamemap.NewMapSquare(4)
-	gmap.Update(testmap[0])
+	minimizerSambol := "A"
+	if testmap[0][0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap[0], minimizerSambol)
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		gmap.Update(testmap[1])
+		gmap.Update(testmap[1], minimizerSambol)
 	}
+	b.StopTimer()
 }

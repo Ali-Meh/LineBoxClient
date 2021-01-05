@@ -2,7 +2,6 @@ package mcts
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
@@ -11,7 +10,7 @@ var (
 	//maximizerSambol indecates the maximizer player symbol
 	maximizerSambol string  = "A"
 	minimizerSambol string  = "B"
-	uctk            float64 = math.Sqrt2
+	uctk            float64 = 2
 )
 
 //SelectMove next move based on base state of the game
@@ -25,11 +24,12 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	}
 	//for i try
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 15000; i++ {
 		mcts(rootNode)
 	}
-	fmt.Println(gmap)
 
+
+	fmt.Println(gmap)
 	//find best option
 	for _, v := range rootNode.childNodes {
 		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.move, v.visits, v.value, v.UCB1(), v.value/v.visits)
@@ -42,6 +42,10 @@ func mcts(node *Node) {
 	node = selectNode(node)
 	value := node.RollOut(3)
 
+	// if len(extractRemainingMoves(node.gmap)) == 0 && node.value != 0 {
+	// 	value *= 100
+	// }
+
 	node.visits++
 	node.value = value
 	for node.parentNode != nil {
@@ -52,13 +56,35 @@ func mcts(node *Node) {
 }
 
 func selectNode(node *Node) *Node {
-	for len(extractRemainingMoves(node.gmap)) > 0 {
-		if node.childNodes != nil {
-			node = node.getBestChild()
-		} else {
+
+	for !node.IsTerminal() {
+		if !node.IsFullyExpanded() {
 			return node.Expand()
 		}
+		node = node.uctBestChild(1.4)
 	}
+	return node
+
+	// for node.childNodes != nil {
+	// 	node = node.getBestChild()
+	// }
+	// if len(extractRemainingMoves(node.gmap)) > 0 && node.visits == 1 || node.depth == 0 {
+	// 	node = node.Expand()
+	// }
+	// for node != nil && (node.depth == 0 || len(extractRemainingMoves(node.gmap)) > 0) {
+	// 	if node.childNodes == nil {
+	// 		node= node.Expand()
+	// 	}
+	// 	return  node.getBestChild()
+	// }
+
+	// for len(extractRemainingMoves(node.gmap)) > 0 {
+	// 	if node.childNodes != nil {
+	// node = node.getBestChild()
+	// 	} else {
+	// 		return node.Expand()
+	// 	}
+	// }
 	return node
 }
 
@@ -74,7 +100,7 @@ func SelectMoveRecursive(gmap gamemap.Map, maximizer string) []int8 {
 	//for i try
 	fmt.Println(gmap)
 
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 100000; i++ {
 		mctsRecursive(rootNode)
 	}
 

@@ -1,6 +1,8 @@
 package mcts
 
 import (
+	// "fmt"
+
 	"math/rand"
 	"time"
 
@@ -11,6 +13,9 @@ import (
 func (n *Node) RollOut(count int) float64 {
 
 	// return n.eval()
+	// if n.depth == 1 && n.move[0]==3&&n.move[1]==2 {
+	// 	fmt.Print()
+	// }
 
 	resChan := make(chan float64)
 	defer close(resChan)
@@ -18,14 +23,18 @@ func (n *Node) RollOut(count int) float64 {
 	for i := 0; i < count; i++ {
 		go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
 	}
+	repeatCount := make(map[float64]int)
 	value := <-resChan
+	repeatCount[value]++
+	maxRes := value
 	for i := 0; i < count-1; i++ {
-		t := <-resChan
-		if value < t || i == 0 {
-			value = t
+		value = <-resChan
+		repeatCount[value]++
+		if repeatCount[maxRes] < repeatCount[value] {
+			maxRes = value
 		}
 	}
-	return value
+	return maxRes + n.eval()*float64(n.depth*2)
 }
 
 func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
@@ -52,9 +61,8 @@ func extractRemainingMoves(gmap *gamemap.Map) [][]int8 {
 func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves [][]int8, resChan chan float64) {
 	/*select moves randomly*/
 	//shuffle the moves
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(time.Now().Local().UnixNano())
 	rand.Shuffle(len(availableMoves), func(i, j int) { availableMoves[i], availableMoves[j] = availableMoves[j], availableMoves[i] })
-
 	//select moves
 	var edgestate string
 	for _, v := range availableMoves {
@@ -63,7 +71,6 @@ func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves [][]int8, resCh
 		} else {
 			edgestate = minimizerSambol
 		}
-
 		if !gmap.SetEdgeState(int(v[0]), int(v[1]), gamemap.EdgeState(edgestate)) {
 			turn = !turn
 		}
@@ -102,10 +109,10 @@ func (n *Node) eval() float64 {
 		for _, cell := range raw {
 			switch cell.FilledEdgeCount {
 			case 3:
-				if n.turn  {
-					score++
-				} else {
+				if n.parentNode.turn {
 					score--
+				} else {
+					score++
 				}
 			case 4:
 				if maximizerSambol == string(cell.OwnedBy) {

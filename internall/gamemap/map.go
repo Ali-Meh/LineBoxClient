@@ -41,7 +41,13 @@ func (gameMap Map) String() string {
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
-			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount)) /* string(gameMap.Cells[i][j].OwnedBy) */ + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
+			innerInfo := ""
+			if gameMap.Cells[i][j].FilledEdgeCount == 4 {
+				innerInfo = string(gameMap.Cells[i][j].OwnedBy)
+			} else {
+				innerInfo = strconv.Itoa(int(gameMap.Cells[i][j].FilledEdgeCount))
+			}
+			res += string(gameMap.Cells[i][j].LeftEdge.State) + "\t" + "(" + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.X)) + ",|" + innerInfo + "|," + strconv.Itoa(int(gameMap.Cells[i][j].Coordinate.Y)) + ")" + "\t" + string(gameMap.Cells[i][j].RightEdge.State)
 		}
 		res += "\n"
 		for j := 0; j < len(gameMap.Cells[i]); j++ {
@@ -106,14 +112,18 @@ func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) bool {
 
 //Update updates the game map according to the raw text it gets
 func (gameMap Map) Update(rawMap, maximizerSambol string) {
+
+	scoreSection := rawMap[strings.Index(rawMap, "\n"):strings.Index(rawMap, "@")]
+	scores := strings.Split(scoreSection[1:len(scoreSection)-1], "-")
+	maximizerScore, _ := strconv.Atoi(scores[0])
+	minimizerScore, _ := strconv.Atoi(scores[1])
+
 	minimizerSambol := "B"
 	if maximizerSambol == "B" {
 		minimizerSambol = "A"
+		minimizerScore,maximizerScore=maximizerScore,minimizerScore
 	}
-	scoreSection := rawMap[strings.Index(rawMap, "\n"):strings.Index(rawMap, "@")]
-	scores := strings.Split(scoreSection[1:len(scoreSection)-1], "-")
-	minimizerScore, _ := strconv.Atoi(scores[1])
-	maximizerScore, _ := strconv.Atoi(scores[0])
+
 
 	rawMap = rawMap[strings.Index(rawMap, "@"):]
 	rawMap = strings.ReplaceAll(rawMap, "\n", "")

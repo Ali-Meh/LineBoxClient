@@ -12,88 +12,117 @@ import (
 func TestSelectMove(t *testing.T) {
 	testmap := []struct {
 		tmap   string
-		result []int8
+		result [][]int8
 	}{
-/*
-		{
-			tmap: `2-1
+/* 	{
+		tmap: `2-1
 0-0
 @A@A@
 -#-#-
 @B@-@
 -#A#-
 @-@B@`,
-			result: []int8{4, 1},
-		},
-		{
-			tmap: `2-1
+		result: [][]int8{{4, 1},},
+	},
+	{
+		tmap: `2-1
 0-0
 @A@A@
 -#B#-
 @B@-@
 -#A#A
 @-@B@`,
-			result: []int8{0, 1},
-		}, {
-			tmap: `2-1
+		result: [][]int8{{0, 1},},
+	}, {
+		tmap: `2-1
 0-0
 @A@-@
 -#-#-
 @B@-@
 -#A#-
 @-@B@`,
-			result: []int8{3, 0},//BUG
-		},
-		{
-			tmap: `2-1
+		result: [][]int8{{3, 0},},//BUG
+	},
+	{
+		tmap: `2-1
 0-0
 @A@A@
 B#-#-
 @B@-@
 -#A#-
 @-@B@`,
-			result: []int8{2, 1},
-		},*/
-		{
-			tmap: `2-1
-0-0
+		result: [][]int8{{2, 1},},
+	},*/
+	{
+		tmap: `1-2
+0-1
 @A@A@
 B#A#-
 @B@-@
 -#A#-
 @-@B@`,
-			result: []int8{1,4},//BUG
-		},/*
-		{
-			tmap: `2-1
-0-0
-@A@A@
-B#A#-
-@B@-@
-A#A#-
-@-@B@`,
-			result: []int8{1, 4},
-		},
-		{
-			tmap: `2-1
-0-0
-@A@A@
-B#A#-
-@B@-@
-A#A#-
-@B@B@`,
-			result: []int8{4, 3},
-		},
-		{
-			tmap: `2-1
-0-0
-@A@A@
--#-#B
-@B@-@
--#A#-
-@-@B@`,
-			result: []int8{0, 3},
-		},*/
+		result: [][]int8{{1,4},{0,3}},//BUG
+	},
+// 	{
+// 		tmap: `2-1
+// 0-1
+// @A@A@
+// B#A#-
+// @B@-@
+// A#A#-
+// @-@B@`,
+// 		result: [][]int8{{1, 4},},
+// 	},
+// 	{
+// 		tmap: `2-1
+// 0-0
+// @A@A@
+// B#A#-
+// @B@-@
+// A#A#-
+// @B@B@`,
+// 		result: [][]int8{{4, 3},{4,1}},
+// 	}, 
+// 	{
+// 		tmap: `2-1
+// 0-0
+// @A@A@
+// -#-#B
+// @B@-@
+// -#A#-
+// @-@B@`,
+// 		result: [][]int8{{0, 3},{1,4}},//BUG
+// 	},
+// 		{
+// 			tmap: `2-1
+// 0-0
+// @A@B@
+// -#-#B
+// @A@-@
+// A#-#B
+// @-@A@`,
+// 	result: [][]int8{{0, 1}, {2, 1}, {3, 2}, {2, 3}, {1, 4}}, //it should find value failing!!
+// },
+// 		{
+// 			tmap: `2-1
+// 0-0
+// @A@B@
+// A#-#B
+// @A@-@
+// A#-#B
+// @-@A@`,
+// 			result: [][]int8{{2, 1}},
+// 		},
+// 		{
+// 			tmap: `2-1
+// 0-0
+// @A@B@
+// A#-#B
+// @A@-@
+// A#-#B
+// @B@A@`,
+// 			result: [][]int8{{2, 1}, {2, 3}},
+// 		},
 	}
 
 	for i, test := range testmap {
@@ -105,11 +134,14 @@ A#A#-
 				maximizer = "B"
 			}
 			gmap.Update(test.tmap, maximizer)
-			move := mcts.SelectMove(*gmap, maximizer)
-			// move := mcts.SelectMoveRecursive(*gmap, maximizer)
-			//assert the evaluation
-			// fmt.Println(move)
-			assert.Equal(t, test.result, move)
+
+			for i := 0; i < 5; i++ {
+				move := mcts.SelectMove(*gmap, maximizer)
+				// move := mcts.SelectMoveRecursive(*gmap, maximizer)
+				//assert the evaluation
+				// fmt.Println(move)
+				assert.Contains(t, test.result, move)
+			}
 		})
 	}
 }
