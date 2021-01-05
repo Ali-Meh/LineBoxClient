@@ -76,7 +76,7 @@ func (n *Node) Expand() *Node {
 
 //NewNode next move based on base state of the game
 func NewNode(action Action, turn bool, gmap *gamemap.Map) *Node {
-	return &Node{causingAction: action, value: 0, visits: 0, depth: 0, turn: turn, gmap: gmap}
+	return &Node{causingAction: action, value: 0, visits: 0, depth: 0, turn: turn, gmap: gmap, remainingActions: extractRemainingMoves(gmap)}
 }
 
 //NewChild will Create a new child node for existing node

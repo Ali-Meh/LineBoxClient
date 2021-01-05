@@ -110,6 +110,31 @@ func (gameMap Map) SetEdgeState(X, Y int, edgeState EdgeState) bool {
 	return res
 }
 
+//GetEdgeState returns state of the edge
+func (gameMap Map) GetEdgeState(X, Y int) EdgeState {
+	//its up and down
+	if X%2 == 1 {
+		//not the upest raw
+		if Y > 0 {
+			return gameMap.Cells[(Y-2)/2][(X-1)/2].LowerEdge.State
+		}
+		//not the lowest raw
+		if Y < len(gameMap.Cells)*2 {
+			return gameMap.Cells[(Y)/2][(X-1)/2].UpperEdge.State
+		}
+	} else { //its left or right
+		//not the most left column
+		if X > 0 {
+			return gameMap.Cells[Y/2][(X-1)/2].RightEdge.State
+		}
+		//not the most right column
+		if X < len(gameMap.Cells)*2 {
+			return gameMap.Cells[(Y-1)/2][(X)/2].LeftEdge.State
+		}
+	}
+	return IsFreeEdge
+}
+
 //Update updates the game map according to the raw text it gets
 func (gameMap Map) Update(rawMap, maximizerSambol string) {
 
@@ -121,9 +146,8 @@ func (gameMap Map) Update(rawMap, maximizerSambol string) {
 	minimizerSambol := "B"
 	if maximizerSambol == "B" {
 		minimizerSambol = "A"
-		minimizerScore,maximizerScore=maximizerScore,minimizerScore
+		minimizerScore, maximizerScore = maximizerScore, minimizerScore
 	}
-
 
 	rawMap = rawMap[strings.Index(rawMap, "@"):]
 	rawMap = strings.ReplaceAll(rawMap, "\n", "")
