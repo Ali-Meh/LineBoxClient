@@ -8,6 +8,70 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPrioritisedChoises(t *testing.T) {
+	testmap := []struct {
+		tmap   string
+		result map[string]int
+	}{
+		{
+			tmap: `2-1
+0-0
+@A@A@
+-#-#-
+@B@-@
+-#A#-
+@-@B@`,
+			result: map[string]int{
+				"01": 2,
+				"21": 2,
+				"41": 1,
+				"22": 2,
+				"32": 2,
+				"03": 2,
+				"14": 2,
+				"43": 2,
+			},
+					}, {
+						tmap: `1-2
+0-0
+@A@A@
+A#B#B
+@B@-@
+-#-#-
+@A@-@`,
+						result: map[string]int{
+							"32": 3,
+							"03": 2,
+							"23": 2,
+							"43": 0,
+							"34": 0,
+						},
+		},
+	}
+
+	for i, test := range testmap {
+		t.Run("test map select #"+fmt.Sprintf("%d", i), func(t *testing.T) {
+			gmap := gamemap.NewMapSquare(2)
+			maximizerSambol = "A"
+			minimizerSambol = "B"
+			if test.tmap[0] == '2' {
+				maximizerSambol, minimizerSambol = minimizerSambol, maximizerSambol
+			}
+			gmap.Update(test.tmap, maximizerSambol)
+
+			res := prioritiseActions(*gmap, extractRemainingMoves(gmap))
+
+			for k, v := range res {
+				for _, a := range v {
+					t.Log(a, "==>", k)
+					assert.Equal(t, test.result[a.String()], k)
+				}
+			}
+
+		})
+	}
+
+}
 func TestRollout(t *testing.T) {
 
 	testmap := []struct {
@@ -17,12 +81,12 @@ func TestRollout(t *testing.T) {
 	}{
 		{
 			action: Action{0, 1},
-			result: []float64{0, 6},
+			result: []float64{6,2},
 			eval:   []float64{2},
 		},
 		{
 			action: Action{0, 3},
-			result: []float64{0, 6},
+			result: []float64{ 6, 2},
 			eval:   []float64{2},
 		},
 		{
@@ -76,12 +140,12 @@ func TestRolloutReverse(t *testing.T) {
 	}{
 		{
 			action: Action{0, 1},
-			result: []float64{0, 6},
+			result: []float64{2, 6},
 			eval:   []float64{2},
 		},
 		{
 			action: Action{0, 3},
-			result: []float64{0, 6},
+			result: []float64{2, 6},
 			eval:   []float64{2},
 		},
 		{
@@ -135,29 +199,49 @@ func TestRolloutOpenMap(t *testing.T) {
 		eval   []float64
 	}{
 		{
-			action: Action{0, 1},
-			result: []float64{0, 6},
-			eval:   []float64{2},
+			action: Action{1, 0},
+			result: []float64{2, -4, 0, 4, -2},
+			eval:   []float64{0},
 		},
 		{
-			action: Action{0, 3},
-			result: []float64{0, 6},
-			eval:   []float64{2},
+			action: Action{1, 4},
+			result: []float64{-4, 0, 4},
+			eval:   []float64{0},
+		},
+		{
+			action: Action{4, 3},
+			result: []float64{1},
+			eval:   []float64{-1},
 		},
 		{
 			action: Action{3, 2},
+			result: []float64{-2,-6},
+			eval:   []float64{-2},
+		},
+		{
+			action: Action{4, 1},
+			result: []float64{-2,-6},
+			eval:   []float64{-2},
+		},
+		{
+			action: Action{1, 2},
 			result: []float64{0},
 			eval:   []float64{0},
 		},
+		// {
+		// 	action: Action{3, 2},
+		// 	result: []float64{0},
+		// 	eval:   []float64{0},
+		// },
 	}
 
-	tmap := `2-1
+	tmap := `1-2
 0-0
 @-@A@
+-#B#-
+@-@-@
 -#A#-
-@B@-@
--#A#-
-@B@B@`
+@-@B@`
 
 	gmap := gamemap.NewMapSquare(2)
 	maximizerSambol = "A"

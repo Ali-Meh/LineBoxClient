@@ -29,7 +29,7 @@ func (n *Node) RollOut(count int) float64 {
 			maxRes = value
 		}
 	}
-	return maxRes + n.Eval()//hestoric outcome + current state seggested score
+	return maxRes + n.Eval() //hestoric outcome + current state seggested score
 }
 
 func extractRemainingMoves(gmap *gamemap.Map) []Action {
@@ -52,25 +52,54 @@ func extractRemainingMoves(gmap *gamemap.Map) []Action {
 	return availableMoves
 }
 
+func prioritiseActions(gmap gamemap.Map, availableMoves []Action) map[int][]Action {
+	choisePriority := make(map[int][]Action, 0)
+
+	max := 0
+	for _, v := range availableMoves {
+		for _, c := range gmap.GetEdgeCell(int(v[0]), int(v[1])) {
+			if c.FilledEdgeCount > max {
+				max = c.FilledEdgeCount
+			}
+		}
+		choisePriority[max] = append(choisePriority[max], v)
+		max = 0
+	}
+	return choisePriority
+}
+
 //evaluate
 func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves []Action, resChan chan float64) {
 	/*select moves randomly*/
 	//shuffle the moves
 	rand.Seed(time.Now().Local().UnixNano())
-	rand.Shuffle(len(availableMoves), func(i, j int) { availableMoves[i], availableMoves[j] = availableMoves[j], availableMoves[i] })
-	//select moves
-	var edgestate string
-	for _, v := range availableMoves {
-		if turn {
-			edgestate = minimizerSambol
-			} else {
-			edgestate = maximizerSambol
-		}
-		if !gmap.SetEdgeState(int(v[0]), int(v[1]), gamemap.EdgeState(edgestate)) {
-			turn = !turn
-		}
+
+	choisePriority := prioritiseActions(gmap, availableMoves)
+
+	for k := 0; k < 4; k++ {
+		rand.Shuffle(len(choisePriority[k]), func(i, j int) {
+			choisePriority[k][i], choisePriority[k][j] = choisePriority[k][j], choisePriority[k][i]
+		})
 	}
 
+
+	//move the actions cousing cell to become 3 to least priority
+	choisePriority[0], choisePriority[2] = choisePriority[2], choisePriority[0]
+
+	//select 4s
+	var edgestate string
+	for k := 3; k >=0 ; k-- {
+		for _, v := range choisePriority[k] {
+			if turn {
+				edgestate = minimizerSambol
+			} else {
+				edgestate = maximizerSambol
+			}
+			if !gmap.SetEdgeState(int(v[0]), int(v[1]), gamemap.EdgeState(edgestate)) {
+				turn = !turn
+			}
+		}
+	}
 	resChan <- evaluate(gmap)
 }
 

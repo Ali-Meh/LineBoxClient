@@ -1,6 +1,7 @@
 package mcts
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -10,6 +11,14 @@ import (
 
 //Action to produce node
 type Action []int8
+
+func (a Action) String() string {
+	res := ""
+	for _, v := range a {
+		res += fmt.Sprint(v)
+	}
+	return res
+}
 
 //Node will keep track of the game state
 type Node struct {

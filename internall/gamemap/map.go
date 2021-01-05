@@ -135,6 +135,32 @@ func (gameMap Map) GetEdgeState(X, Y int) EdgeState {
 	return IsFreeEdge
 }
 
+//GetEdgeState returns state of the edge
+func (gameMap Map) GetEdgeCell(X, Y int) []*Cell {
+	edgeCelles := make([]*Cell, 0)
+	//its up and down
+	if X%2 == 1 {
+		//not the upest raw
+		if Y > 0 {
+			edgeCelles = append(edgeCelles, gameMap.Cells[(Y-2)/2][(X-1)/2])
+		}
+		//not the lowest raw
+		if Y < len(gameMap.Cells)*2 {
+			edgeCelles = append(edgeCelles, gameMap.Cells[(Y)/2][(X-1)/2])
+		}
+	} else { //its left or right
+		//not the most left column
+		if X > 0 {
+			edgeCelles = append(edgeCelles, gameMap.Cells[Y/2][(X-1)/2])
+		}
+		//not the most right column
+		if X < len(gameMap.Cells)*2 {
+			edgeCelles = append(edgeCelles, gameMap.Cells[(Y-1)/2][(X)/2])
+		}
+	}
+	return edgeCelles
+}
+
 //Update updates the game map according to the raw text it gets
 func (gameMap Map) Update(rawMap, maximizerSambol string) {
 
