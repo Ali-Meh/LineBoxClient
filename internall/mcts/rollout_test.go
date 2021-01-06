@@ -210,7 +210,7 @@ func TestRolloutOpenMap(t *testing.T) {
 		},
 		{
 			action: Action{4, 3},
-			result: []float64{1},
+			result: []float64{-5,-1,1},
 			eval:   []float64{-1},
 		},
 		{

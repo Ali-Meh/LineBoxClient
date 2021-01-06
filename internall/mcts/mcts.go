@@ -10,7 +10,7 @@ var (
 	//maximizerSambol indecates the maximizer player symbol
 	maximizerSambol string  = "A"
 	minimizerSambol string  = "B"
-	uctk            float64 = 2
+	uctk            float64 = 1.4
 )
 
 //SelectMove next move based on base state of the game
@@ -32,11 +32,15 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 
 	fmt.Println(gmap)
 	//find best option
+	bestNode := rootNode.children[0]
 	for _, v := range rootNode.children {
-		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(uctk), v.value/v.visits)
+		fmt.Printf("coords: %v\t\tvisits:%7.0f\t\tvalue:%10.0f\t\tUCB:%f\t\tUCB0:%f\t\tAVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(uctk), v.UCB1(0), v.value/v.visits)
+		if v.UCB1(0) == 0 {
+			bestNode = v
+		}
 	}
-
-	return rootNode.getBestChild(0.0).causingAction
+	fmt.Println(bestNode.causingAction)
+	return bestNode.causingAction
 }
 
 func mcts(root *Node) {
@@ -49,14 +53,13 @@ func mcts(root *Node) {
 
 func selectLeaf(node *Node) *Node {
 
-	for !node.isLeaf()&&!node.isTerminal() {
+	for !node.isLeaf() && !node.isTerminal() {
 		if !node.isFullyExpanded() {
 			return node.Expand()
 		}
 		node = node.getBestChild(uctk)
 	}
 	return node
-
 
 	// for !node.isTerminal() {
 	// 	if !node.isFullyExpanded() {

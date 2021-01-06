@@ -172,7 +172,7 @@ func (gameMap Map) Update(rawMap, maximizerSambol string) {
 	minimizerSambol := "B"
 	if maximizerSambol == "B" {
 		minimizerSambol = "A"
-		minimizerScore, maximizerScore = maximizerScore, minimizerScore
+		// minimizerScore, maximizerScore = maximizerScore, minimizerScore
 	}
 
 	rawMap = rawMap[strings.Index(rawMap, "@"):]

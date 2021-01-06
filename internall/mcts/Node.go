@@ -37,7 +37,7 @@ func (n Node) UCB1(c float64) float64 {
 	if n.visits == 0 || n.depth == 0 /* || n.visits == 1 && n.depth != 0 && n.parentNode.depth == 0 */ {
 		return math.Inf(1)
 	}
-	return (n.Eval()/float64(n.depth)*(c+1))*n.value/(n.visits) + c*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits))
+	return ((n.Eval()/float64(n.depth+1))*(c+2))*n.value/(n.visits) + c*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits))
 }
 
 //GetChildren Gets Node Children

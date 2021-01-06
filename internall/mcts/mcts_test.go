@@ -139,7 +139,7 @@ func TestSelectMove(t *testing.T) {
 				move := mcts.SelectMove(*gmap, maximizer)
 				// move := mcts.SelectMoveRecursive(*gmap, maximizer)
 				//assert the evaluation
-				// fmt.Println(move)
+				fmt.Println(move)
 				assert.Contains(t, test.result, move)
 			}
 		})
@@ -167,7 +167,7 @@ B#A#-#B#-
 	}
 	gmap.Update(testmap, minimizerSambol)
 	move := mcts.SelectMove(*gmap, minimizerSambol)
-	assert.Equal(t, []int8{0, 1}, move)
+	assert.Equal(t, []int8{6, 5}, move)
 }
 func TestSelect2(t *testing.T) {
 	testmap := `2-1
@@ -191,7 +191,7 @@ func TestSelect2(t *testing.T) {
 	gmap.Update(testmap, maximizerSambol)
 
 	move := mcts.SelectMove(*gmap, maximizerSambol)
-	assert.Equal(t, []int8{3,0}, move)
+	assert.Equal(t, []int8{7,8}, move)
 }
 
 func TestSelect3(t *testing.T) {
@@ -216,7 +216,7 @@ A#-#A#-#-
 	gmap.Update(testmap, minimizerSambol)
 
 	move := mcts.SelectMove(*gmap, minimizerSambol)
-	assert.Equal(t, []int8{1, 0}, move)
+	assert.Equal(t, []int8{7, 8}, move)
 }
 func TestSelect4(t *testing.T) {
 	testmap := `2-1
@@ -267,5 +267,5 @@ A#-#-#-#-
 	fmt.Println(gmap)
 	move := mcts.SelectMove(*gmap, minimizerSambol)
 	t.Log(move)
-	assert.NotEqual(t, []int8{0, 5}, move)
+	assert.NotEqual(t, []int8{8, 3}, move)
 }
