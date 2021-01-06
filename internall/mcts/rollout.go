@@ -72,6 +72,10 @@ func prioritiseActions(gmap gamemap.Map, availableMoves []Action) map[int][]Acti
 		choisePriority[max] = append(choisePriority[max], v)
 		max = 0
 	}
+	//move the actions cousing cell to become 3 to least priority
+	choisePriority[0], choisePriority[2] = choisePriority[2], choisePriority[0]
+	choisePriority[1], choisePriority[2] = choisePriority[2], choisePriority[1]
+
 	return choisePriority
 }
 
@@ -88,9 +92,6 @@ func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves []Action, resCh
 			choisePriority[k][i], choisePriority[k][j] = choisePriority[k][j], choisePriority[k][i]
 		})
 	}
-
-	//move the actions cousing cell to become 3 to least priority
-	choisePriority[0], choisePriority[2] = choisePriority[2], choisePriority[0]
 
 	//select 4s
 	var edgestate string

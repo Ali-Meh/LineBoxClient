@@ -32,14 +32,23 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 
 	fmt.Println(gmap)
 	//find best option
-	bestNode := rootNode.children[0]
+	var bestNode *Node
+	bestAvgNode := rootNode.children[0]
 	for _, v := range rootNode.children {
 		fmt.Printf("coords: %v\t\tvisits:%7.0f\t\tvalue:%10.0f\t\tUCB:%f\t\tUCB0:%f\t\tAVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(uctk), v.UCB1(0), v.value/v.visits)
-		if v.UCB1(0) == 0 {
+		if v.UCB1(0) == 0 && v.value/v.visits != 0 {
 			bestNode = v
 		}
+		if bestAvgNode.value/bestAvgNode.visits < v.value/v.visits {
+			// if
+			bestAvgNode = v
+		}
 	}
-	fmt.Println(bestNode.causingAction)
+	fmt.Println("Best Avg Node", bestAvgNode.causingAction)
+	if bestNode == nil {
+		return bestAvgNode.causingAction
+	}
+	fmt.Println("Best Node", bestNode.causingAction)
 	return bestNode.causingAction
 }
 
