@@ -14,7 +14,7 @@ func TestSelectMove(t *testing.T) {
 		tmap   string
 		result [][]int8
 	}{
-/* 	{
+	{
 		tmap: `2-1
 0-0
 @A@A@
@@ -24,45 +24,45 @@ func TestSelectMove(t *testing.T) {
 @-@B@`,
 		result: [][]int8{{4, 1},},
 	},
-	{
-		tmap: `2-1
-0-0
-@A@A@
--#B#-
-@B@-@
--#A#A
-@-@B@`,
-		result: [][]int8{{0, 1},},
-	}, {
-		tmap: `2-1
-0-0
-@A@-@
--#-#-
-@B@-@
--#A#-
-@-@B@`,
-		result: [][]int8{{3, 0},},//BUG
-	},
-	{
-		tmap: `2-1
-0-0
-@A@A@
-B#-#-
-@B@-@
--#A#-
-@-@B@`,
-		result: [][]int8{{2, 1},},
-	},*/
-	{
-		tmap: `1-2
-0-1
-@A@A@
-B#A#-
-@B@-@
--#A#-
-@-@B@`,
-		result: [][]int8{{1,4},{0,3}},//BUG
-	},
+// 	{
+// 		tmap: `2-1
+// 0-0
+// @A@A@
+// -#B#-
+// @B@-@
+// -#A#A
+// @-@B@`,
+// 		result: [][]int8{{0, 1},},
+// 	}, {
+// 		tmap: `2-1
+// 0-0
+// @A@-@
+// -#-#-
+// @B@-@
+// -#A#-
+// @-@B@`,
+// 		result: [][]int8{{3, 0},},//BUG
+// 	},
+// 	{
+// 		tmap: `2-1
+// 0-0
+// @A@A@
+// B#-#-
+// @B@-@
+// -#A#-
+// @-@B@`,
+// 		result: [][]int8{{2, 1},},
+// 	},
+// 	{
+// 		tmap: `1-2
+// 0-1
+// @A@A@
+// B#A#-
+// @B@-@
+// -#A#-
+// @-@B@`,
+// 		result: [][]int8{{1,4},{0,3}},//BUG
+// 	},
 // 	{
 // 		tmap: `2-1
 // 0-1
@@ -73,26 +73,26 @@ B#A#-
 // @-@B@`,
 // 		result: [][]int8{{1, 4},},
 // 	},
-// 	{
-// 		tmap: `2-1
+// 		{
+// 			tmap: `2-1
 // 0-0
 // @A@A@
 // B#A#-
 // @B@-@
 // A#A#-
 // @B@B@`,
-// 		result: [][]int8{{4, 3},{4,1}},
-// 	}, 
-// 	{
-// 		tmap: `2-1
+// 			result: [][]int8{{4, 3}, {4, 1}},
+// 		},
+// 		{
+// 			tmap: `2-1
 // 0-0
 // @A@A@
 // -#-#B
 // @B@-@
 // -#A#-
 // @-@B@`,
-// 		result: [][]int8{{0, 3},{1,4}},//BUG
-// 	},
+// 			result: [][]int8{{0, 3}, {1, 4}}, //BUG
+// 		},
 // 		{
 // 			tmap: `2-1
 // 0-0
@@ -135,7 +135,7 @@ B#A#-
 			}
 			gmap.Update(test.tmap, maximizer)
 
-			for i := 0; i < 5; i++ {
+			for i := 0; i < 1; i++ {
 				move := mcts.SelectMove(*gmap, maximizer)
 				// move := mcts.SelectMoveRecursive(*gmap, maximizer)
 				//assert the evaluation
@@ -191,7 +191,7 @@ func TestSelect2(t *testing.T) {
 	gmap.Update(testmap, maximizerSambol)
 
 	move := mcts.SelectMove(*gmap, maximizerSambol)
-	assert.Equal(t, []int8{2, 1}, move)
+	assert.Equal(t, []int8{3,0}, move)
 }
 
 func TestSelect3(t *testing.T) {
@@ -217,4 +217,55 @@ A#-#A#-#-
 
 	move := mcts.SelectMove(*gmap, minimizerSambol)
 	assert.Equal(t, []int8{1, 0}, move)
+}
+func TestSelect4(t *testing.T) {
+	testmap := `2-1
+0-0
+@A@-@-@-@
+-#-#A#-#-
+@A@-@-@-@
+-#-#-#-#B
+@A@-@B@-@
+-#B#-#-#-
+@-@-@-@A@
+B#-#A#-#B
+@-@-@-@-@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(4)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
+	fmt.Println(gmap)
+	move := mcts.SelectMove(*gmap, minimizerSambol)
+	t.Log(move)
+	assert.NotEqual(t, []int8{0, 5}, move)
+}
+
+func TestSelect5(t *testing.T) {
+	testmap := `2-1
+0-0
+@B@B@B@B@
+-#-#A#-#B
+@A@-@-@-@
+-#-#B#A#-
+@A@A@-@A@
+-#-#-#-#-
+@-@-@-@-@
+A#-#-#-#-
+@-@-@-@-@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(4)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
+	fmt.Println(gmap)
+	move := mcts.SelectMove(*gmap, minimizerSambol)
+	t.Log(move)
+	assert.NotEqual(t, []int8{0, 5}, move)
 }

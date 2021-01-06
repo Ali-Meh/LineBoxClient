@@ -1,8 +1,6 @@
 package mcts
 
 import (
-	// "fmt"
-
 	"math/rand"
 	"time"
 
@@ -29,6 +27,15 @@ func (n *Node) RollOut(count int) float64 {
 			maxRes = value
 		}
 	}
+	// if n.depth == 1 {
+	// actions := []Action{n.causingAction}
+	// p := n.parentNode
+	// for p.parentNode != nil {
+	// 	actions = append(actions, p.causingAction)
+	// 	p = p.parentNode
+	// }
+	// fmt.Printf("at %d  > %v evaled as : %f\n", n.depth, actions, maxRes)
+	// }
 	return maxRes + n.Eval() //hestoric outcome + current state seggested score
 }
 
@@ -82,13 +89,12 @@ func evaluateRollOut(gmap gamemap.Map, turn bool, availableMoves []Action, resCh
 		})
 	}
 
-
 	//move the actions cousing cell to become 3 to least priority
 	choisePriority[0], choisePriority[2] = choisePriority[2], choisePriority[0]
 
 	//select 4s
 	var edgestate string
-	for k := 3; k >=0 ; k-- {
+	for k := 3; k >= 0; k-- {
 		for _, v := range choisePriority[k] {
 			if turn {
 				edgestate = minimizerSambol

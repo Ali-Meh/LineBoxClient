@@ -22,14 +22,14 @@ func TestPrioritisedChoises(t *testing.T) {
 -#A#-
 @-@B@`,
 			result: map[string]int{
-				"01": 2,
-				"21": 2,
-				"41": 1,
-				"22": 2,
-				"32": 2,
-				"03": 2,
-				"14": 2,
-				"43": 2,
+				"[0 1]": 2,
+				"[2 1]": 2,
+				"[4 1]": 1,
+				"[2 2]": 2,
+				"[3 2]": 2,
+				"[0 3]": 2,
+				"[1 4]": 2,
+				"[4 3]": 2,
 			},
 					}, {
 						tmap: `1-2
@@ -40,11 +40,11 @@ A#B#B
 -#-#-
 @A@-@`,
 						result: map[string]int{
-							"32": 3,
-							"03": 2,
-							"23": 2,
-							"43": 0,
-							"34": 0,
+							"[3 2]": 3,
+							"[0 3]": 2,
+							"[2 3]": 2,
+							"[4 3]": 0,
+							"[3 4]": 0,
 						},
 		},
 	}
@@ -64,7 +64,7 @@ A#B#B
 			for k, v := range res {
 				for _, a := range v {
 					t.Log(a, "==>", k)
-					assert.Equal(t, test.result[a.String()], k)
+					assert.Equal(t, test.result[fmt.Sprint(a)], k)
 				}
 			}
 

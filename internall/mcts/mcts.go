@@ -24,6 +24,7 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	}
 	//for i try
 	rootNode.Expand()
+	rootNode.visits++
 
 	for i := 0; i < 15000; i++ {
 		mcts(rootNode)
@@ -32,7 +33,7 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	fmt.Println(gmap)
 	//find best option
 	for _, v := range rootNode.children {
-		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(1.4), v.value/v.visits)
+		fmt.Printf("coords: %v , visits:%f , value :%f UCB:%f AVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(uctk), v.value/v.visits)
 	}
 
 	return rootNode.getBestChild(0.0).causingAction
@@ -40,20 +41,30 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 
 func mcts(root *Node) {
 	leaf := selectLeaf(root)
-	println(leaf.causingAction)
+	// println(leaf.causingAction)
 	result := leaf.RollOut(5)
-	println(result)
-	// leaf.backpropagate(result)
+	// println(result)
+	leaf.backpropagate(result)
 }
 
 func selectLeaf(node *Node) *Node {
-	for !node.isTerminal() {
+
+	for !node.isLeaf()&&!node.isTerminal() {
 		if !node.isFullyExpanded() {
 			return node.Expand()
 		}
-		node = node.getBestChild(1.4)
+		node = node.getBestChild(uctk)
 	}
 	return node
+
+
+	// for !node.isTerminal() {
+	// 	if !node.isFullyExpanded() {
+	// 		return node.Expand()
+	// 	}
+	// 	node = node.getBestChild(uctk)
+	// }
+	// return node
 }
 
 //SelectMoveRecursive next move based on base state of the game
@@ -103,10 +114,10 @@ func mctsRecursive(node *Node) float64 {
 		*	Go to Leaf Node
 		 */
 		chossenNode := node.children[0]
-		chossenUcb := chossenNode.UCB1(1.4)
+		chossenUcb := chossenNode.UCB1(uctk)
 		//go to leafnode
 		for _, n := range node.children {
-			v := n.UCB1(1.4)
+			v := n.UCB1(uctk)
 			if v > chossenUcb {
 				chossenUcb = v
 				chossenNode = n

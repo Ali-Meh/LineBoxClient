@@ -1,7 +1,6 @@
 package mcts
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"time"
@@ -12,13 +11,13 @@ import (
 //Action to produce node
 type Action []int8
 
-func (a Action) String() string {
-	res := ""
-	for _, v := range a {
-		res += fmt.Sprint(v)
-	}
-	return res
-}
+// func (a Action) String() string {
+// 	res := ""
+// 	for _, v := range a {
+// 		res += fmt.Sprint(v)
+// 	}
+// 	return res
+// }
 
 //Node will keep track of the game state
 type Node struct {
@@ -35,10 +34,10 @@ type Node struct {
 
 //UCB1 Calculates
 func (n Node) UCB1(c float64) float64 {
-	if n.visits == 0 || n.depth == 0 || n.visits == 1 && n.depth != 0 && n.parentNode.depth == 0 {
+	if n.visits == 0 || n.depth == 0 /* || n.visits == 1 && n.depth != 0 && n.parentNode.depth == 0 */ {
 		return math.Inf(1)
 	}
-	return n.value/(n.visits) + c*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits))
+	return (n.Eval()/float64(n.depth)*(c+1))*n.value/(n.visits) + c*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits))
 }
 
 //GetChildren Gets Node Children
@@ -119,11 +118,11 @@ func (n *Node) getBestChild(uctk float64) *Node {
 // IsLeaf returns true if the called-upon node is a leaf node in the tree false
 // otherwise.
 func (n Node) isLeaf() bool {
-	return n.children == nil || len(n.children) == 0
+	return n.visits == 0 && (n.children == nil || len(n.children) == 0)
 }
 
 func (n *Node) isFullyExpanded() bool {
-	return n.children != nil
+	return n.visits > 0 && n.children != nil
 }
 
 // IsTerminal conceptually differs from IsLeaf in that a node will be called
@@ -148,4 +147,13 @@ func (n *Node) popAction() Action {
 	action := n.remainingActions[0]
 	n.remainingActions = n.remainingActions[1:]
 	return action
+}
+
+func (n *Node) backpropagate(result float64) {
+	for !n.isRoot() {
+		n.value += float64(result) //* float64(n.parent.value.NextToMove())
+		n.visits++
+		n = n.parentNode
+	}
+	n.visits++
 }
