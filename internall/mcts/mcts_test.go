@@ -22,7 +22,7 @@ func TestSelectMove(t *testing.T) {
 @B@-@
 -#A#-
 @-@B@`,
-			result: [][]int8{{4, 1}},
+			result: [][]int8{{4,1}},
 		},
 		{
 			tmap: `2-1
@@ -33,7 +33,8 @@ func TestSelectMove(t *testing.T) {
 -#A#A
 @-@B@`,
 			result: [][]int8{{0, 1}, {3, 2}},
-		}, {
+		},
+		 {
 			tmap: `2-1
 0-0
 @A@-@
@@ -75,7 +76,7 @@ A#A#-
 		},
 		{
 			tmap: `2-1
-0-0
+1-1
 @A@A@
 B#A#-
 @B@-@
@@ -167,7 +168,8 @@ B#A#-#B#-
 	}
 	gmap.Update(testmap, minimizerSambol)
 	move := mcts.SelectMove(*gmap, minimizerSambol)
-	assert.Equal(t, []int8{6, 5}, move)
+	assert.NotContains(t,[][]int8{{1, 2},{2, 3},{3, 1},{7, 0},{7, 6},{8, 7},{5, 6},{4, 7},{1, 8},{1, 6},{2, 5},{3, 6},},move)
+	// assert.NotEqual(t, []int8{6, 5}, move)
 }
 func TestSelect2(t *testing.T) {
 	testmap := `2-1
@@ -191,7 +193,13 @@ func TestSelect2(t *testing.T) {
 	gmap.Update(testmap, maximizerSambol)
 
 	move := mcts.SelectMove(*gmap, maximizerSambol)
-	assert.Equal(t, []int8{7, 8}, move)
+	assert.NotEqual(t, []int8{0, 1}, move)
+	assert.NotEqual(t, []int8{2, 1}, move)
+	assert.NotEqual(t, []int8{6, 1}, move)
+	assert.NotEqual(t, []int8{7, 0}, move)
+	assert.NotEqual(t, []int8{6, 3}, move)
+	assert.NotEqual(t, []int8{7, 4}, move)
+	assert.NotEqual(t, []int8{4, 3}, move)
 }
 
 func TestSelect3(t *testing.T) {
@@ -216,7 +224,8 @@ A#-#A#-#-
 	gmap.Update(testmap, minimizerSambol)
 
 	move := mcts.SelectMove(*gmap, minimizerSambol)
-	assert.Equal(t, []int8{7, 8}, move)
+	assert.NotEqual(t, []int8{2, 3}, move)
+	assert.NotEqual(t, []int8{1, 4}, move)
 }
 func TestSelect4(t *testing.T) {
 	testmap := `2-1
@@ -241,6 +250,13 @@ B#-#A#-#B
 	fmt.Println(gmap)
 	move := mcts.SelectMove(*gmap, minimizerSambol)
 	t.Log(move)
+	assert.NotEqual(t, []int8{0, 1}, move)
+	assert.NotEqual(t, []int8{2, 1}, move)
+	assert.NotEqual(t, []int8{0, 3}, move)
+	assert.NotEqual(t, []int8{1, 6}, move)
+	assert.NotEqual(t, []int8{0, 5}, move)
+	assert.NotEqual(t, []int8{7, 8}, move)
+	assert.NotEqual(t, []int8{6, 7}, move)
 	assert.NotEqual(t, []int8{0, 5}, move)
 }
 
@@ -343,7 +359,7 @@ A#-#B#-#A
 	fmt.Println(gmap)
 	move := mcts.SelectMove(*gmap, minimizerSambol)
 	t.Log(move)
-	assert.Contains(t, [][]int8{{0, 1}, {1, 0}}, move)
+	assert.Contains(t, [][]int8{{0, 1}, {1, 0}, {3, 0}, {0, 3}}, move)
 }
 
 func TestSelect9(t *testing.T) {
