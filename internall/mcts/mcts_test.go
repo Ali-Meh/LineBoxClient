@@ -424,10 +424,10 @@ A#-#-#B#-
 	}
 	gmap.Update(testmap, minimizerSambol)
 	fmt.Println(gmap)
-	for i := 0; i < 3; i++ {
+	// for i := 0; i < 3; i++ {
 		move := mcts.SelectMove(*gmap, minimizerSambol)
 		t.Log(move)
 		// assert.Contains(t, [][]int8{{0, 1}, {1, 0}}, move)
 		assert.Contains(t, [][]int8{{8,7},{7,8}}, move)
-	}
+	// }
 }

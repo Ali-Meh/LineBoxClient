@@ -10,6 +10,8 @@ type Map struct {
 	Cells    [][]*Cell
 	AIndexes map[int]interface{}
 	BIndexes map[int]interface{}
+	Hight    int8
+	Width    int8
 }
 
 //NewMapRect Creates ne map with diffrent hight and width
@@ -24,6 +26,8 @@ func NewMapRect(hight, width int8) *Map {
 	}
 	gameMap.AIndexes = make(map[int]interface{})
 	gameMap.BIndexes = make(map[int]interface{})
+	gameMap.Hight = hight
+	gameMap.Width = width
 	return gameMap
 }
 

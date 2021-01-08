@@ -20,10 +20,14 @@ func TestEvaluateMaximizer(t *testing.T) {
 
 	//create map
 	gmap := gamemap.NewMapSquare(2)
-	gmap.Update(testmap)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
 	score := ai.Evaluate(*gmap, true, "A")
 	//assert the evaluation
-	assert.Equal(t, 40, score)
+	assert.Equal(t, 20, score)
 }
 func TestEvaluateMinimizer(t *testing.T) {
 	testmap := `2-1
@@ -36,10 +40,14 @@ func TestEvaluateMinimizer(t *testing.T) {
 
 	//create map
 	gmap := gamemap.NewMapSquare(2)
-	gmap.Update(testmap)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
 	score := ai.Evaluate(*gmap, false, "B")
 	//assert the evaluation
-	assert.Equal(t, -40, score)
+	assert.Equal(t, -20, score)
 }
 func TestMinimax(t *testing.T) {
 	testmap := `2-1
@@ -52,11 +60,13 @@ func TestMinimax(t *testing.T) {
 
 	//create map
 	gmap := gamemap.NewMapSquare(2)
-	gmap.Update(testmap)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
 	fmt.Println(gmap)
-	gridTree := gamemap.NewNode(nil, gamemap.IsFreeEdge,gmap)
-	score := ai.MiniMax(*gmap, 7, true, -999999, 999999, gridTree)
-	// fmt.Println(gridTree)
+	score := ai.MiniMax(*gmap, 7, true, -999999, 999999)
 	//assert the evaluation
 	assert.Equal(t, 40, score)
 }
@@ -68,19 +78,7 @@ func TestSelectMove(t *testing.T) {
 		turn   string
 		result []int8
 	}{
-
 		{
-			tmap: `2-1
-0-0
-@A@A@
--#-#-
-@B@-@
--#A#-
-@-@B@`,
-			depth:  4,
-			turn:   "B",
-			result: []int8{0, 1},
-		}, {
 			tmap: `2-1
 0-0
 @A@-@
@@ -91,6 +89,18 @@ func TestSelectMove(t *testing.T) {
 			turn:   "A",
 			depth:  7,
 			result: []int8{3, 0},
+		},
+		{
+			tmap: `2-1
+0-0
+@A@A@
+-#-#-
+@B@-@
+-#A#-
+@-@B@`,
+			depth:  3,
+			turn:   "B",
+			result: []int8{4, 1},
 		},
 		{
 			tmap: `2-1
@@ -158,9 +168,13 @@ A#A#-
 		t.Run("test map select #"+fmt.Sprintf("%d", i), func(t *testing.T) {
 			//create map
 			gmap := gamemap.NewMapSquare(2)
-			gmap.Update(test.tmap)
+			minimizerSambol := "A"
+			if test.tmap[0] == '2' {
+				minimizerSambol = "B"
+			}
+			gmap.Update(test.tmap, minimizerSambol)
 			fmt.Println(gmap)
-			move, _ := ai.SelectMove(*gmap, test.depth, test.turn)
+			move := ai.SelectMove(*gmap, test.depth, test.turn)
 			//assert the evaluation
 			// fmt.Println(move)
 			assert.Equal(t, test.result, move)
@@ -171,9 +185,9 @@ A#A#-
 func TestSelect2(t *testing.T) {
 	testmap := `2-1
 0-0
-@A@A@-@-@
-B#-#-#-#-
-@A@-@-@-@
+@-@A@-@-@
+-#-#-#-#-
+@-@-@-@-@
 -#-#-#-#-
 @-@A@-@-@
 -#-#-#-#B
@@ -183,32 +197,14 @@ B#-#-#-#-
 
 	//create map
 	gmap := gamemap.NewMapSquare(4)
-	gmap.Update(testmap)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
 	fmt.Println(gmap)
-	move, _ := ai.SelectMove(*gmap, 3, "A")
+	move := ai.SelectMove(*gmap, 3, "A")
 	//assert the evaluation
 	fmt.Println(move)
-	assert.Equal(t, []int8{2, 1}, move)
-}
-func TestSelect3(t *testing.T) {
-	testmap := `2-1
-2-4
-@B@B@B@B@
-B#-#A#A#B
-@-@-@A@A@
-B#B#B#A#B
-@-@-@B@A@
-B#B#A#A#B
-@-@-@A@A@
-A#-#A#B#A
-@A@B@A@A@`
-
-	//create map
-	gmap := gamemap.NewMapSquare(4)
-	gmap.Update(testmap)
-	fmt.Println(gmap)
-	move, _ := ai.SelectMove(*gmap, 3, "A")
-	//assert the evaluation
-	fmt.Println(move)
-	assert.Equal(t, []int8{2, 1}, move)
+	assert.Equal(t, []int8{3, 2}, move)
 }
