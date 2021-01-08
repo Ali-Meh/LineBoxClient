@@ -6,11 +6,8 @@ import (
 	"github.com/ali-meh/LineBoxClient/internall/client"
 )
 
-// "github.com/ali-meh/LineBoxClient/client"
 
 func main() {
-	// gamemap := gmap.NewMapSquare(3)
-	// fmt.Println(gamemap)
 
 	arguments := os.Args
 	addr := "localhost:1898"

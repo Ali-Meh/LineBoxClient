@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
-	// "github.com/ali-meh/LineBoxClient/internall/mcts"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -1,39 +1,40 @@
 package ai
 
 import (
+	"fmt"
+
 	"github.com/ali-meh/LineBoxClient/internall/gamemap"
 )
 
 var (
-	//maximizerSamble indecates the maximizer player symbol
-	maximizerSamble string
-	minimizerSamble string
+	//maximizerSambol indecates the maximizer player symbol
+	maximizerSambol string = "A"
+	minimizerSambol string = "B"
 )
 
 //Evaluate will evaluate the score of the current map
-//will return for +10 for every 3 filled
+//will return for +30 for every 3 filled and 4 filled cube
 func Evaluate(gmap gamemap.Map, maximizingTurn bool, maximizer ...string) int {
 	if maximizer != nil {
-		maximizerSamble = maximizer[0]
-		if maximizerSamble == "A" {
-			minimizerSamble = "B"
+		maximizerSambol = maximizer[0]
+		if maximizerSambol == "A" {
+			minimizerSambol = "B"
 		} else {
-			minimizerSamble = "A"
+			minimizerSambol = "A"
 		}
 	}
 	score := 0
-	//TODO for those are 3 dim find if the others
 	for _, raw := range gmap.Cells {
 		for _, cell := range raw {
-			// if cell.FilledEdgeCount == 3 {
-			// 	if maximizingTurn {
-			// 		score -= 20
-			// 	} else {
-			// 		score += 20
-			// 	}
-			// }
-			if cell.FilledEdgeCount == 4 {
-				if maximizerSamble == string(cell.OwnedBy) {
+			switch cell.FilledEdgeCount {
+			case 3:
+				if maximizingTurn {
+					score += 20
+				} else {
+					score -= 20
+				}
+			case 4:
+				if maximizerSambol == string(cell.OwnedBy) {
 					score += 20
 				} else {
 					score -= 20
@@ -41,6 +42,8 @@ func Evaluate(gmap gamemap.Map, maximizingTurn bool, maximizer ...string) int {
 			}
 		}
 	}
+	// fmt.Println("EVALUATING MAP: ", score, maximizingTurn)
+	// fmt.Println(gmap)
 	// fmt.Println(score)
 	// if maximizingTurn {
 	return score
@@ -62,6 +65,7 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 		return eval
 	}
 	turn := !maximizingTurn
+	// move := []int8{0, 0}
 	if maximizingTurn {
 		bestVal := -99999999
 		for i := range gmap.Cells {
@@ -72,13 +76,16 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 							// fmt.Println("depth:", depth, "MAX 🔼 Chose:", edge.Coordinates)
 							clonedMap := gmap.Clone()
 							// cell.FilledEdgeCount++
-							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSamble)) {
+							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSambol)) {
 								// clonedMap.Cells[i][j].OwnedBy = gamemap.IsAEdge
 								turn = !turn
 							}
 							score := MiniMax(clonedMap, depth-1, turn, alpha, beta)
 							turn = !maximizingTurn
 							bestVal = max(score, bestVal)
+							// if bestVal==score{
+							// 	move = []int8{edge.X, edge.Y}
+							// }
 							alpha = max(alpha, score)
 							if beta <= alpha {
 								break
@@ -88,11 +95,11 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
-		// if depth > 1 {
-		// 	fmt.Println(gmap)
-		// 	fmt.Println("depth: ", depth)
-		// 	fmt.Println("Maximizer🔼")
-		// 	fmt.Println("returning", bestVal)
+		// if gmap.Cells[0][1].RightEdge.State == "A" {
+		// fmt.Println(gmap)
+		// fmt.Println("depth: ", depth)
+		// fmt.Println("Maximizer🔼",move)
+		// fmt.Println("returning", bestVal)
 		// }
 		return bestVal
 	} else {
@@ -106,13 +113,16 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 							clonedMap := gmap.Clone()
 
 							// cell.FilledEdgeCount++
-							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(minimizerSamble)) {
+							if clonedMap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(minimizerSambol)) {
 								// clonedMap.Cells[i][j].OwnedBy = gamemap.IsBEdge
 								turn = !turn
 							}
 							score := MiniMax(clonedMap, depth-1, turn, alpha, beta)
 							turn = !maximizingTurn
 							bestVal = min(score, bestVal)
+							// if bestVal==score{
+							// 	move = []int8{edge.X, edge.Y}
+							// }
 							beta = min(beta, score)
 							if beta <= alpha {
 								break
@@ -122,11 +132,11 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 				}
 			}
 		}
-		// if bestVal == -80 && depth > 2 {
-		// 	fmt.Println(gmap)
-		// 	fmt.Println("depth: ", depth)
-		// 	fmt.Println("MINIMIZER 🔻")
-		// 	fmt.Println("returning", bestVal)
+		// if gmap.Cells[0][1].RightEdge.State == "A" {
+		// fmt.Println(gmap)
+		// fmt.Println("depth: ", depth)
+		// fmt.Println("MINIMIZER 🔻",move)
+		// fmt.Println("returning", bestVal)
 		// }
 		return bestVal
 	}
@@ -134,11 +144,11 @@ func MiniMax(gmap gamemap.Map, depth int, maximizingTurn bool, alpha, beta int) 
 
 //SelectMove find and retrun best move
 func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
-	maximizerSamble = maximizer
-	if maximizerSamble == "A" {
-		minimizerSamble = "B"
+	maximizerSambol = maximizer
+	if maximizerSambol == "A" {
+		minimizerSambol = "B"
 	} else {
-		minimizerSamble = "A"
+		minimizerSambol = "A"
 	}
 
 	bestVal := -99999999
@@ -153,11 +163,12 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
 						clonedmap := gmap.Clone()
 
 						// cell.FilledEdgeCount++
-						if clonedmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSamble)) {
+						if clonedmap.SetEdgeState(int(edge.X), int(edge.Y), gamemap.EdgeState(maximizerSambol)) {
 							// clonedmap.Cells[i][j].OwnedBy = gamemap.IsAEdge
 							turn = !turn
 						}
 						score := MiniMax(clonedmap, depth, turn, -999999, 999999)
+						// fmt.Println("<==================> depth:", depth, "MAX 🔼 Chose:", edge.Coordinates, "Score:", score)
 						turn = false
 						if score > bestVal {
 							bestVal = score
@@ -168,6 +179,7 @@ func SelectMove(gmap gamemap.Map, depth int, maximizer string) []int8 {
 			}
 		}
 	}
+	fmt.Println("selecting: [", move[0], ",", move[1], "] with score: ", bestVal)
 	return move
 }
 

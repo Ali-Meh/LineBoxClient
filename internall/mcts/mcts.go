@@ -68,14 +68,6 @@ func selectLeaf(node *Node) *Node {
 		node = node.getBestChild(uctk)
 	}
 	return node
-
-	// for !node.isTerminal() {
-	// 	if !node.isFullyExpanded() {
-	// 		return node.Expand()
-	// 	}
-	// 	node = node.getBestChild(uctk)
-	// }
-	// return node
 }
 
 //SelectMoveRecursive next move based on base state of the game

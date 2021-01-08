@@ -27,16 +27,7 @@ func (n *Node) RollOut(count int) float64 {
 			maxRes = value
 		}
 	}
-	// if n.depth == 1 || n.depth == 2{
-	// actions := []Action{n.causingAction}
-	// p := n.parentNode
-	// for p.parentNode != nil {
-	// 	actions = append(actions, p.causingAction)
-	// 	p = p.parentNode
-	// }
-	// fmt.Printf("at %d  > %v evaled as : %f\n", n.depth, actions, maxRes)
-	// }
-	// return (maxRes + n.Eval())//*uctk //hestoric outcome + current state seggested score
+
 	return (maxRes)/float64(n.depth+1) + n.Eval()*uctk //hestoric outcome + current state seggested score
 }
 
@@ -126,11 +117,6 @@ func evaluate(gmap gamemap.Map) float64 {
 			}
 		}
 	}
-	// if score > 0 {
-	// 	return 1
-	// }
-	// 	return 0
-
 	return score
 }
 
@@ -155,10 +141,6 @@ func (n *Node) Eval() float64 {
 			}
 		}
 	}
-	// if score > 0 {
-	// 	return 1
-	// }
-	// 	return 0
 
 	return score
 }

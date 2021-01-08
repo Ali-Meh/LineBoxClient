@@ -64,21 +64,6 @@ func (c *Client) ReadServer() /*  (string, error)  */ {
 		move := mcts.SelectMove(*gmap, maximizer)
 		fmt.Printf("Sending %v to server\n", move)
 		c.SendCord(move[0], move[1])
-		/*
-			c.SendCord(6, 3)
-			2-1
-			0-0
-			 012345678
-			0@-@-@-@-@
-			1-#-#-#-#-
-			2@-@-@-@-@
-			3-#-#-#A#-
-			4@-@-@-@-@
-			5-#-#-#-#-
-			6@-@-@-@-@
-			7-#-#-#-#-
-			8@-@-@-@-@
-		*/
 	}
 }
 
