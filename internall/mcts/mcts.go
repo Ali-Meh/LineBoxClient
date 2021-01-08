@@ -27,7 +27,7 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 	rootNode.Expand()
 	rootNode.visits++
 
-	if len(rootNode.remainingActions) < int(gmap.Hight*gmap.Width+1) {
+	if len(rootNode.remainingActions) < int(gmap.Hight*gmap.Width)+4 {
 		depth := (float64(len(gmap.AIndexes)+len(gmap.BIndexes))/float64(len(gmap.Cells)*len(gmap.Cells[0])*4))*4 + 3
 		fmt.Println("Using Minimax with depth ", depth)
 		return ai.SelectMove(gmap, int(depth), maximizerSambol)
