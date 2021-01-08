@@ -56,7 +56,7 @@ B#-#-
 		},
 		{
 			tmap: `1-2
-0-1
+1-0
 @A@A@
 B#A#-
 @B@-@
@@ -123,6 +123,16 @@ A#-#B
 A#-#B
 @B@A@`,
 			result: [][]int8{{2, 1}, {2, 3}},
+		},
+		{
+			tmap: `2-1
+0-0
+@A@B@
+-#-#A
+@A@-@
+-#B#B
+@-@-@`,
+			result: [][]int8{{1, 4}, {0, 3}},
 		},
 	}
 
@@ -337,32 +347,6 @@ B#-#A#-#A
 }
 
 func TestSelect8(t *testing.T) {
-	testmap := `1-2
-0-0
-@-@-@-@A@
--#B#B#-#B
-@B@-@B@-@
--#-#-#-#A
-@B@-@B@B@
--#A#A#-#A
-@-@-@-@-@
-A#-#B#-#A
-@A@B@A@A@`
-
-	//create map
-	gmap := gamemap.NewMapSquare(4)
-	minimizerSambol := "A"
-	if testmap[0] == '2' {
-		minimizerSambol = "B"
-	}
-	gmap.Update(testmap, minimizerSambol)
-	fmt.Println(gmap)
-	move := mcts.SelectMove(*gmap, minimizerSambol)
-	t.Log(move)
-	assert.Contains(t, [][]int8{{0, 1}, {1, 0}, {3, 0}, {0, 3}}, move)
-}
-
-func TestSelect9(t *testing.T) {
 	testmap := `2-1
 2-0
 @-@A@A@A@
@@ -383,7 +367,67 @@ B#A#B#-#B
 	}
 	gmap.Update(testmap, minimizerSambol)
 	fmt.Println(gmap)
-	move := mcts.SelectMove(*gmap, minimizerSambol)
-	t.Log(move)
-	assert.Contains(t, [][]int8{{0, 1}, {1, 0}}, move)
+	for i := 0; i < 3; i++ {
+		move := mcts.SelectMove(*gmap, minimizerSambol)
+		t.Log(move)
+		// assert.Contains(t, [][]int8{{0, 1}, {1, 0}}, move)
+		assert.Contains(t, [][]int8{{1,6}}, move)
+	}
+}
+func TestSelect9s(t *testing.T) {
+	testmap := `1-2
+0-0
+@-@-@-@A@
+-#B#B#-#B
+@B@-@B@-@
+-#-#-#-#A
+@B@-@B@B@
+-#A#A#-#A
+@-@-@-@-@
+A#-#B#-#A
+@A@B@A@A@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(4)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
+	fmt.Println(gmap)
+	for i := 0; i < 3; i++ {
+		move := mcts.SelectMove(*gmap, minimizerSambol)
+		t.Log(move)
+		assert.Contains(t, [][]int8{{0, 1}, {1, 0}, {3, 0}, {0, 3}}, move)
+	}
+}
+
+
+func TestSelect10(t *testing.T) {
+	testmap := `1-2
+3-2
+@A@B@A@B@
+B#A#A#-#A
+@B@B@-@-@
+A#B#B#-#A
+@B@A@B@B@
+B#-#-#A#B
+@-@B@-@A@
+A#-#-#B#-
+@A@A@A@-@`
+
+	//create map
+	gmap := gamemap.NewMapSquare(4)
+	minimizerSambol := "A"
+	if testmap[0] == '2' {
+		minimizerSambol = "B"
+	}
+	gmap.Update(testmap, minimizerSambol)
+	fmt.Println(gmap)
+	for i := 0; i < 3; i++ {
+		move := mcts.SelectMove(*gmap, minimizerSambol)
+		t.Log(move)
+		// assert.Contains(t, [][]int8{{0, 1}, {1, 0}}, move)
+		assert.Contains(t, [][]int8{{8,7},{7,8}}, move)
+	}
 }

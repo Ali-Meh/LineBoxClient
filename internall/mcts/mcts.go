@@ -10,7 +10,7 @@ var (
 	//maximizerSambol indecates the maximizer player symbol
 	maximizerSambol string  = "A"
 	minimizerSambol string  = "B"
-	uctk            float64 = 1.4
+	uctk            float64 = 5
 )
 
 //SelectMove next move based on base state of the game
@@ -32,24 +32,27 @@ func SelectMove(gmap gamemap.Map, maximizer string) []int8 {
 
 	fmt.Println(gmap)
 	//find best option
-	var bestNode *Node
+	// var bestNode *Node
 	bestAvgNode := rootNode.children[0]
 	for _, v := range rootNode.children {
-		fmt.Printf("coords: %v\t\tvisits:%7.0f\t\tvalue:%10.0f\t\tUCB:%f\t\tUCB0:%f\t\tAVG:%f\n", v.causingAction, v.visits, v.value, v.UCB1(uctk), v.UCB1(0), v.value/v.visits)
-		if v.UCB1(0) == 0 && v.value/v.visits != 0 {
-			bestNode = v
-		}
-		if bestAvgNode.value/bestAvgNode.visits < v.value/v.visits {
-			// if
+		fmt.Printf("coords: %v\t\tvisits:%7.0f\t\tvalue:%10.0f\t\tUCB:%15f\t\tUCB0:%15f\t\tAVG:%10f\n", v.causingAction, v.visits, v.value, v.UCB1(uctk), v.UCB1(0), v.value/v.visits)
+		// if v.UCB1(0) == 0 && v.value/v.visits != 0 {
+		// 	bestNode = v
+		// }
+		if v.UCB1(0) > bestAvgNode.UCB1(0) {
 			bestAvgNode = v
 		}
+		// if bestAvgNode.value/bestAvgNode.visits < v.value/v.visits {
+		// 	// if
+		// 	bestAvgNode = v
+		// }
 	}
 	fmt.Println("Best Avg Node", bestAvgNode.causingAction)
-	if bestNode == nil {
-		return bestAvgNode.causingAction
-	}
-	fmt.Println("Best Node", bestNode.causingAction)
-	return bestNode.causingAction
+	// if bestNode == nil {
+	return bestAvgNode.causingAction
+	// }
+	// fmt.Println("Best Node", bestNode.causingAction)
+	// return bestNode.causingAction
 }
 
 func mcts(root *Node) {

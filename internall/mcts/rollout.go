@@ -14,7 +14,7 @@ func (n *Node) RollOut(count int) float64 {
 	defer close(resChan)
 
 	for i := 0; i < count; i++ {
-		go evaluateRollOut(n.gmap.Clone(), n.turn, extractRemainingMoves(n.gmap), resChan)
+		go evaluateRollOut(n.gmap.Clone(), !n.turn, extractRemainingMoves(n.gmap), resChan)
 	}
 	repeatCount := make(map[float64]int)
 	value := <-resChan
@@ -27,7 +27,7 @@ func (n *Node) RollOut(count int) float64 {
 			maxRes = value
 		}
 	}
-	// if n.depth == 1 {
+	// if n.depth == 1 || n.depth == 2{
 	// actions := []Action{n.causingAction}
 	// p := n.parentNode
 	// for p.parentNode != nil {
@@ -36,7 +36,8 @@ func (n *Node) RollOut(count int) float64 {
 	// }
 	// fmt.Printf("at %d  > %v evaled as : %f\n", n.depth, actions, maxRes)
 	// }
-	return maxRes + n.Eval() //hestoric outcome + current state seggested score
+	// return (maxRes + n.Eval())//*uctk //hestoric outcome + current state seggested score
+	return (maxRes)/float64(n.depth+1) + n.Eval()*uctk //hestoric outcome + current state seggested score
 }
 
 func extractRemainingMoves(gmap *gamemap.Map) []Action {
@@ -135,7 +136,7 @@ func evaluate(gmap gamemap.Map) float64 {
 
 //Eval will evaluate the score of the current terminal
 func (n *Node) Eval() float64 {
-	score := 0.0
+	score := 4.0
 	for _, raw := range n.gmap.Cells {
 		for _, cell := range raw {
 			switch cell.FilledEdgeCount {

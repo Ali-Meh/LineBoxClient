@@ -34,14 +34,14 @@ type Node struct {
 
 //UCB1 Calculates
 func (n Node) UCB1(c float64) float64 {
-	if n.visits == 0 || n.depth == 0 /* || n.visits == 1 && n.depth != 0 && n.parentNode.depth == 0 */ {
+	if n.visits == 0 || n.depth == 0 || n.visits <5 && n.depth != 0 && n.parentNode.depth == 0 {
 		return math.Inf(1)
 	}
 	sign := 1.0
 	if n.value < 0 {
 		sign = -1.0
 	}
-	return sign * (((n.Eval()/float64(n.depth+1))*(c+2))*n.value/(n.visits) + c*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits)))
+	return sign * (((n.Eval()/float64(n.depth+1))/* *(c+1) */)*n.value/(n.visits) + c*math.Sqrt(math.Log(n.parentNode.visits)/(n.visits)))
 }
 
 //GetChildren Gets Node Children
@@ -107,12 +107,12 @@ func (n *Node) hasChild(action []int8) bool {
 	return false
 }
 
-func (n *Node) getBestChild(uctk float64) *Node {
+func (n *Node) getBestChild(c float64) *Node {
 	chosenIndex := 0
 	maxValue := -math.MaxFloat64
 	for i, child := range n.children {
-		if child.UCB1(uctk) > maxValue {
-			maxValue = child.UCB1(uctk)
+		if child.UCB1(c) > maxValue {
+			maxValue = child.UCB1(c)
 			chosenIndex = i
 		}
 	}
